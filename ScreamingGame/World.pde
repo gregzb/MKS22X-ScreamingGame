@@ -5,12 +5,57 @@ public class World {
   private Player player;
   private int difficulty;
   private int score;
+  private color backgroundColor;
   
-  public World(int difficulty) {
+  public World(int difficulty, Player player) {
     this.difficulty = difficulty;
     this.score = 0;
     this.cObjects = new ArrayList<CollidableObject>();
     this.platforms = new ArrayList<Platform>();
-    this.player = new Player(new Polygon(new PVector(0, 0), new PVector(10, 0), new PVector(10, 10), new PVector(0, 0)), new PVector(width/2, height/2), color(255, 0, 127));
+    this.player = player;
+    this.backgroundColor = color(150, 192, 234);
+    
+    this.cObjects.add(this.player);
   }
+  
+  public void setDifficulty(int difficulty) {
+    this.difficulty = difficulty;
+  }
+  
+  public int getDifficulty() {
+    return difficulty;
+  }
+  
+  public void setScore(int score) {
+    this.score = score;
+  }
+  
+  public int getScore() {
+    return score;
+  }
+  
+  public Player getPlayer() {
+    return player;
+  }
+  
+  public color getBackgroundColor() {
+    return backgroundColor;
+  }
+  
+  public ArrayList<CollidableObject> getCollidableObjects() {
+    return cObjects;
+  }
+  
+  public void addPlatform(Platform platform) {
+    platforms.add(platform);
+  }
+  
+  public void removePlatform(int idx) {
+    platforms.remove(idx);
+  }
+  
+  public ArrayList<Platform> getPlatforms() {
+    return platforms;
+  }
+  
 }

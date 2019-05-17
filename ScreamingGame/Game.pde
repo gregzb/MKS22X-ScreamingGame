@@ -5,7 +5,8 @@ public class Game {
   
   public Game() {
     audioInManager = new AudioInputManager();
-    world = new World(0);
+    Player p = new Player(new Polygon(new PVector(0, 0), new PVector(10, 0), new PVector(10, 10), new PVector(0, 0)), new PVector(width/2, height/2), color(255, 0, 127));
+    world = new World(0, p);
     
     init();
   }
