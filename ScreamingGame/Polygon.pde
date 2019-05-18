@@ -1,6 +1,7 @@
 public class Polygon {
   private PVector[] points;
   private PShape myShape;
+  
   public Polygon(PVector... points) {
     this.points = points;
     
@@ -10,6 +11,24 @@ public class Polygon {
       myShape.vertex(point.x, point.y);
     }
     myShape.endShape();
+  }
+  
+  public Polygon(Polygon p, PVector position) {
+    
+    this.points = new PVector[p.points.length];
+    for (int i = 0; i < points.length; i++) {
+      PVector oldVec = p.points[i];
+      this.points[i] = new PVector(oldVec.x + position.x, oldVec.y + position.y);
+    }
+  }
+  
+  public PVector getCenter() {
+    PVector total = new PVector();
+    for(PVector point : points) {
+      total.add(point);
+    }
+    total.div(points.length);
+    return total;
   }
   
   public PVector[] getAxes() {
@@ -45,9 +64,12 @@ public class Polygon {
     PVector minAxis = null;
     float minOverlap = Float.MAX_VALUE;
     
-    for (PVector axis : axes) {
+    //System.out.println("All axes: " + axes);
+    
+    for (int i = 0; i < axes.size(); i++) {
+      PVector axis = axes.get(i);
       float[] proj1 = projectOntoAxis(axis);
-      float[] proj2 = projectOntoAxis(axis);
+      float[] proj2 = p.projectOntoAxis(axis);
       
       //if (proj1[0] >= proj2[0] && proj1[0] <= proj2[1] 
       // || proj1[1] >= proj2[0] && proj1[1] <= proj2[1]
@@ -63,8 +85,14 @@ public class Polygon {
       float C = min(proj2);
       float D = max(proj2);
       
+      //System.out.println(i +", " + (B - C) + ", " + (D-A));
+            
       if (B - C >= 0 && D-A >= 0) {
         float overlap = abs(max(A, C) - min(B, D));
+        float overlapNotAbs = (max(A, C) - min(B, D));
+        //System.out.println("idx: " + i + ", " + overlapNotAbs + ", " + max(A, C) + ", " + min(B, D));
+        //System.out.println("A, B, C, D: " + A + ", " + B + ", " + C + ", " + D);
+        //idx 1 and 3 are inverts of each other, but are same axis, how fix?
         if (overlap < minOverlap) {
           minOverlap = overlap;
           minAxis = axis;
@@ -79,8 +107,15 @@ public class Polygon {
       System.exit(0);
     }
     
+    //System.out.println("MIN: " + minAxis);
+    
     minAxis.mult(minOverlap);
     
+    PVector d = getCenter().copy().sub(p.getCenter());
+    if (d.dot(minAxis) < 0) {
+      minAxis.mult(-1);
+    }
+        
     return new IntersectInfo(true, minAxis);
   }
   
@@ -90,5 +125,14 @@ public class Polygon {
   
   public void setFill(color c) {
     myShape.setFill(c);
+  }
+  
+  public String toString() {
+    String temp = "[";
+    for(PVector point : points) {
+      temp += point;
+    }
+    temp += "]";
+    return temp;
   }
 }

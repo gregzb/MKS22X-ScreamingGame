@@ -13,4 +13,8 @@ public class IntersectInfo {
   public PVector getReverseForce() {
     return reverseForce;
   }
+  
+  public String toString() {
+    return "Collide: " + collided + ", Force: " + getReverseForce();
+  }
 }
