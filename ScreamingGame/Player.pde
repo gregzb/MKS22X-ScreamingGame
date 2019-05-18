@@ -10,22 +10,19 @@ public class Player extends CollidableObject{
   }
   
   public void update() {
+    
+    if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ')) {
+      PVector currentAccel = getAcceleration();
+      setAcceleration(new PVector(currentAccel.x, -25));
+    } else {
+      setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
+    }
+    
     applyAcceleration();
     
     Polygon translatedPoints = new Polygon(getHitbox(), getPosition());
     
     PVector newVel = getVelocity().copy();
-    
-    //if (keyPressed) {
-    //  //System.out.println(key);
-    //  if (key == 'a' || key == 'A') {
-    //    newVel.x -= 2;
-    //  } else if (key == 'd' || key == 'D') {
-    //    newVel.x += 2;
-    //  }
-    //} else {
-    //  newVel.x = 0;
-    //}
     
     boolean movingHorizontal = false;
     
@@ -44,9 +41,7 @@ public class Player extends CollidableObject{
     }
     
     newVel.x = constrain(newVel.x, -3, 3);
-    
-    //System.out.println(newVel);
-    
+        
     ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
     for (CollidableObject cObject : cObjects) {
       if (cObject == this) continue;

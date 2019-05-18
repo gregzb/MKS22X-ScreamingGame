@@ -3,10 +3,12 @@ public class Game {
   private AudioInputManager audioInManager;
   private World world;
   private Set<Character> keysDown;
+  private Set<Character> prevKeysDown;
   
   public Game(Set<Character> keysDown) {
     audioInManager = new AudioInputManager();
     this.keysDown = keysDown;
+    this.prevKeysDown = new HashSet<Character>(this.keysDown);
     
     world = new World(0);
     Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127));
@@ -51,6 +53,8 @@ public class Game {
     //System.out.println(plat1.getHitbox().intersects(plat2.getHitbox()));
     
     popMatrix();
+    
+    this.prevKeysDown = new HashSet<Character>(this.keysDown);
   }
   
   public World getWorld() {
@@ -63,5 +67,9 @@ public class Game {
   
   public boolean keyDown(Character keyD) {
     return keysDown.contains(keyD);
+  }
+  
+  public boolean prevKeyDown(Character keyD) {
+    return prevKeysDown.contains(keyD);
   }
 }
