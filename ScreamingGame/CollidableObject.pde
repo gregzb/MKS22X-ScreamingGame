@@ -1,9 +1,9 @@
 public abstract class CollidableObject {
-  Polygon hitbox;
-  PVector position;
-  PVector velocity;
-  float maxVelocity;
-  PVector acceleration;
+  private Polygon hitbox;
+  private PVector position;
+  private PVector velocity;
+  private float maxVelocity;
+  private PVector acceleration;
   
   public CollidableObject(Polygon hitbox, PVector position) {
     this(hitbox, position, new PVector(0, 0), new PVector(0, 0));
@@ -22,6 +22,46 @@ public abstract class CollidableObject {
   
   public float getMaxVelocity() {
     return maxVelocity;
+  }
+  
+  public void setAcceleration(PVector acceleration) {
+    this.acceleration = acceleration;
+  }
+  
+  public PVector getAcceleration() {
+    return acceleration;
+  }
+  
+  public void setVelocity(PVector velocity) {
+    this.velocity = velocity;
+  }
+  
+  public PVector getVelocity() {
+    return velocity;
+  }
+  
+  public void applyAcceleration() {
+    velocity.add(acceleration);
+    
+    if (velocity.mag() > maxVelocity) {
+      velocity = velocity.normalize().mult(maxVelocity);
+    }
+  }
+  
+  public void applyVelocity() {
+    position.add(velocity);
+  }
+  
+  public PVector getPosition() {
+    return position;
+  }
+  
+  public void setPosition(PVector position) {
+    this.position = position;
+  }
+  
+  public Polygon getHitbox() {
+    return hitbox;
   }
   
   public abstract void update();
