@@ -4,14 +4,14 @@ public abstract class CollidableObject {
   private PVector velocity;
   private float maxVelocity;
   private PVector acceleration;
-  private World world;
+  private Game game;
   
-  public CollidableObject(World world, Polygon hitbox, PVector position) {
-    this(world, hitbox, position, new PVector(0, 0), new PVector(0, 0));
+  public CollidableObject(Game game, Polygon hitbox, PVector position) {
+    this(game, hitbox, position, new PVector(0, 0), new PVector(0, 0));
   }
   
-  public CollidableObject(World world, Polygon hitbox, PVector position, PVector velocity, PVector acceleration) {
-    this.world = world;
+  public CollidableObject(Game game, Polygon hitbox, PVector position, PVector velocity, PVector acceleration) {
+    this.game = game;
     this.hitbox = hitbox;
     this.position = position;
     this.velocity = velocity;
@@ -66,8 +66,8 @@ public abstract class CollidableObject {
     return hitbox;
   }
   
-  public World getWorld() {
-    return world;
+  public Game getGame() {
+    return game;
   }
   
   public abstract void update();

@@ -1,16 +1,15 @@
 public class Game {
   
-  AudioInputManager audioInManager;
-  World world;
+  private AudioInputManager audioInManager;
+  private World world;
+  private Set<Character> keysDown;
   
-  //Platform plat1;
-  //Platform plat2;
-  
-  public Game() {
+  public Game(Set<Character> keysDown) {
     audioInManager = new AudioInputManager();
+    this.keysDown = keysDown;
     
     world = new World(0);
-    Player p = new Player(world, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127));
+    Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127));
     world.setPlayer(p);
     
     init();
@@ -23,7 +22,7 @@ public class Game {
     //plat2 = new Platform(world, new Polygon(new PVector(-60, 20), new PVector(90, 40), new PVector(75, 60), new PVector(-75, 75)), new PVector(width/2, height/2), color(120, 200, 100));
     
     for (int i = 0; i < numPlatforms; i++) {
-      Platform platform = new Platform(world, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
+      Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
       world.addPlatform(platform);
     }
     
@@ -52,5 +51,17 @@ public class Game {
     //System.out.println(plat1.getHitbox().intersects(plat2.getHitbox()));
     
     popMatrix();
+  }
+  
+  public World getWorld() {
+    return world;
+  }
+  
+  public AudioInputManager getAudioInputManager() {
+    return audioInManager;
+  }
+  
+  public boolean keyDown(Character keyD) {
+    return keysDown.contains(keyD);
   }
 }

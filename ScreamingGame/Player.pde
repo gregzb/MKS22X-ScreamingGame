@@ -1,12 +1,12 @@
 public class Player extends CollidableObject{
   private color c;
   
-  public Player(World world, Polygon hitbox, PVector position, color c) {
-    super(world, hitbox, position);
+  public Player(Game game, Polygon hitbox, PVector position, color c) {
+    super(game, hitbox, position);
     this.c = c;
     
     setMaxVelocity(10);
-    setAcceleration(new PVector(0, world.getGravity().y));
+    setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
   }
   
   public void update() {
@@ -16,14 +16,30 @@ public class Player extends CollidableObject{
     
     PVector newVel = getVelocity().copy();
     
-    if (keyPressed) {
-      //System.out.println(key);
-      if (key == 'a' || key == 'A') {
-        newVel.x -= 2;
-      } else if (key == 'd' || key == 'D') {
-        newVel.x += 2;
-      }
-    } else {
+    //if (keyPressed) {
+    //  //System.out.println(key);
+    //  if (key == 'a' || key == 'A') {
+    //    newVel.x -= 2;
+    //  } else if (key == 'd' || key == 'D') {
+    //    newVel.x += 2;
+    //  }
+    //} else {
+    //  newVel.x = 0;
+    //}
+    
+    boolean movingHorizontal = false;
+    
+    if (getGame().keyDown('a') || getGame().keyDown('A')) {
+      newVel.x -= 2;
+      movingHorizontal = true;
+    }
+    
+    if (getGame().keyDown('d') || getGame().keyDown('D')) {
+      newVel.x += 2;
+      movingHorizontal = true;
+    }
+    
+    if (!movingHorizontal) {
       newVel.x = 0;
     }
     
@@ -31,7 +47,7 @@ public class Player extends CollidableObject{
     
     //System.out.println(newVel);
     
-    ArrayList<Platform> cObjects = getWorld().getPlatforms();
+    ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
     for (CollidableObject cObject : cObjects) {
       if (cObject == this) continue;
       Polygon translatedObject = new Polygon(cObject.getHitbox(), cObject.getPosition());
