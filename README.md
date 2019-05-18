@@ -12,9 +12,9 @@
   * Added basic gravity to the player, generate several platforms are the beginning of the game, and everything scrolls to the left   -Greg
   
 ### 5/18/2019
-  * Added Separating Axis Theorem Collision to player, player can now stand on platforms
-  * System for keyboard input is added - the player may be controlled with A, D, and SPACE.
-  * The player dies when outside the bounds of the screen.
+  * Added Separating Axis Theorem Collision to player, player can now stand on platforms  -Greg
+  * System for keyboard input is added - the player may be controlled with A, D, and SPACE  -Greg
+  * The player dies when outside the bounds of the screen -Greg
   
 # Authors
   * Greg Zborovsky
