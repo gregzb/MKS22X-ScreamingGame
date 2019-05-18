@@ -1,6 +1,6 @@
 public class World {
   
-  private ArrayList<CollidableObject> cObjects;
+  //private ArrayList<CollidableObject> cObjects;
   private ArrayList<Platform> platforms;
   private Player player;
   private int difficulty;
@@ -10,12 +10,12 @@ public class World {
   public World(int difficulty, Player player) {
     this.difficulty = difficulty;
     this.score = 0;
-    this.cObjects = new ArrayList<CollidableObject>();
+    //this.cObjects = new ArrayList<CollidableObject>();
     this.platforms = new ArrayList<Platform>();
     this.player = player;
-    this.backgroundColor = color(150, 192, 234);
+    this.backgroundColor = color(200, 217, 234);
     
-    this.cObjects.add(this.player);
+    //this.cObjects.add(this.player);
   }
   
   public void setDifficulty(int difficulty) {
@@ -43,6 +43,11 @@ public class World {
   }
   
   public ArrayList<CollidableObject> getCollidableObjects() {
+    ArrayList<CollidableObject> cObjects = new ArrayList<CollidableObject>();
+    cObjects.add(player);
+    for (Platform platform : platforms) {
+      cObjects.add(platform);
+    }
     return cObjects;
   }
   
