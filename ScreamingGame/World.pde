@@ -6,13 +6,13 @@ public class World {
   private int difficulty;
   private int score;
   private color backgroundColor;
+  private PVector gravity = new PVector(0, .3);
   
-  public World(int difficulty, Player player) {
+  public World(int difficulty) {
     this.difficulty = difficulty;
     this.score = 0;
     //this.cObjects = new ArrayList<CollidableObject>();
     this.platforms = new ArrayList<Platform>();
-    this.player = player;
     this.backgroundColor = color(200, 217, 234);
     
     //this.cObjects.add(this.player);
@@ -38,6 +38,10 @@ public class World {
     return player;
   }
   
+    public void setPlayer(Player player) {
+    this.player = player;
+  }
+  
   public color getBackgroundColor() {
     return backgroundColor;
   }
@@ -61,6 +65,14 @@ public class World {
   
   public ArrayList<Platform> getPlatforms() {
     return platforms;
+  }
+  
+  public void setGravity(PVector gravity) {
+    this.gravity = gravity;
+  }
+  
+  public PVector getGravity() {
+    return gravity;
   }
   
 }

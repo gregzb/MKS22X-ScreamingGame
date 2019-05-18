@@ -1,8 +1,8 @@
 public class Platform extends CollidableObject{
   private color c;
   
-  public Platform(Polygon hitbox, PVector position, color c) {
-    super(hitbox, position);
+  public Platform(World world, Polygon hitbox, PVector position, color c) {
+    super(world, hitbox, position);
     this.c = c;
   }
   
