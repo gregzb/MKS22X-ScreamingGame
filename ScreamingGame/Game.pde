@@ -44,13 +44,8 @@ public class Game {
     translate(-(secsRunning * pixelsPerSeconds), 0);
     
     Polygon actualBounds = new Polygon(baseBounds, new PVector(secsRunning * pixelsPerSeconds, 0));
-    //Polygon actualBounds = baseBounds;
     
-    Polygon translatedPlayer = new Polygon(world.getPlayer().getHitbox(), world.getPlayer().getPosition());
-    
-    //System.out.println("In bounds: " + actualBounds.intersects(translatedPlayer).hasCollided());
-    
-    boolean playerInBounds = actualBounds.intersects(translatedPlayer).hasCollided();
+    boolean playerInBounds = actualBounds.intersects(world.getPlayer().getTranslatedHitbox()).hasCollided();
     
     if (!playerInBounds) {
       System.out.println("PLAYER HAS DIED");

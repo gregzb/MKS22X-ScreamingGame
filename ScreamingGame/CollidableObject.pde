@@ -70,6 +70,10 @@ public abstract class CollidableObject {
     return game;
   }
   
+  public Polygon getTranslatedHitbox() {
+    return new Polygon(getHitbox(), getPosition());
+  }
+  
   public abstract void update();
   public abstract void display();
 }
