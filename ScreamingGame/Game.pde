@@ -5,6 +5,8 @@ public class Game {
   private Set<Character> keysDown;
   private Set<Character> prevKeysDown;
   
+  private Polygon baseBounds;
+  
   public Game(Set<Character> keysDown) {
     audioInManager = new AudioInputManager();
     this.keysDown = keysDown;
@@ -28,6 +30,8 @@ public class Game {
       world.addPlatform(platform);
     }
     
+    baseBounds = new Polygon(new PVector(0, 0), new PVector(width, 0), new PVector(width, height), new PVector(0, height));
+    
     //Platform platform = new Platform(world, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
     //world.addPlatform(platform);
   }
@@ -37,7 +41,22 @@ public class Game {
     background(world.getBackgroundColor());
     float secsRunning = millis() / 1000.0;
     float pixelsPerSeconds = 50;
-    //translate(-(secsRunning * pixelsPerSeconds), 0);
+    translate(-(secsRunning * pixelsPerSeconds), 0);
+    
+    Polygon actualBounds = new Polygon(baseBounds, new PVector(secsRunning * pixelsPerSeconds, 0));
+    //Polygon actualBounds = baseBounds;
+    
+    Polygon translatedPlayer = new Polygon(world.getPlayer().getHitbox(), world.getPlayer().getPosition());
+    
+    //System.out.println("In bounds: " + actualBounds.intersects(translatedPlayer).hasCollided());
+    
+    boolean playerInBounds = actualBounds.intersects(translatedPlayer).hasCollided();
+    
+    if (!playerInBounds) {
+      System.out.println("PLAYER HAS DIED");
+      System.exit(0);
+    }
+    
     ArrayList<CollidableObject> cObjects = world.getCollidableObjects();
     for (CollidableObject cObject : cObjects) {
       cObject.update();

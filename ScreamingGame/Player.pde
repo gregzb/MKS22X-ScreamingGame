@@ -108,7 +108,7 @@ public class Player extends CollidableObject{
     
     
     
-    System.out.println("Pos: " + getPosition() + ", Vel: " + getVelocity() + ", Accel: " + getAcceleration());
+    //System.out.println("Pos: " + getPosition() + ", Vel: " + getVelocity() + ", Accel: " + getAcceleration());
   }
   
   public void display() {
