@@ -19,6 +19,7 @@ public class Polygon {
       PVector pt2 = points[(idx + 1) % points.length];
       PVector diff = pt1.copy().sub(pt2);
       PVector normal = new PVector(diff.y, -diff.x);
+      normal.normalize();
       axes[idx] = normal;
     }
     return axes;
@@ -41,9 +42,46 @@ public class Polygon {
     for (PVector axis : getAxes()) axes.add(axis);
     for (PVector axis : p.getAxes()) axes.add(axis);
     
-    // add more
+    PVector minAxis = null;
+    float minOverlap = Float.MAX_VALUE;
     
-    return new IntersectInfo(false, new PVector(0, 0));
+    for (PVector axis : axes) {
+      float[] proj1 = projectOntoAxis(axis);
+      float[] proj2 = projectOntoAxis(axis);
+      
+      //if (proj1[0] >= proj2[0] && proj1[0] <= proj2[1] 
+      // || proj1[1] >= proj2[0] && proj1[1] <= proj2[1]
+      // || proj2[0] >= proj1[0] && proj2[0] <= proj1[1]
+      // || proj2[1] >= proj1[0] && proj2[1] <= proj1[1]) {
+      //  //contains
+      //} else {
+      //  return new IntersectInfo(false, new PVector(0, 0));
+      //}
+      
+      float A = min(proj1);
+      float B = max(proj1);
+      float C = min(proj2);
+      float D = max(proj2);
+      
+      if (B - C >= 0 && D-A >= 0) {
+        float overlap = abs(max(A, C) - min(B, D));
+        if (overlap < minOverlap) {
+          minOverlap = overlap;
+          minAxis = axis;
+        }
+      } else {
+        return new IntersectInfo(false, new PVector(0, 0));
+      }
+    }
+    
+    if (minAxis == null) {
+      System.out.println("WHY IS THE MINIMUM AXIS NULL");
+      System.exit(0);
+    }
+    
+    minAxis.mult(minOverlap);
+    
+    return new IntersectInfo(true, minAxis);
   }
   
   public PShape getShape() {
