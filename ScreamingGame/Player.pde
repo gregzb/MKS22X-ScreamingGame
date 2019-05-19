@@ -6,11 +6,15 @@ public class Player extends CollidableObject{
     super(game, hitbox, position);
     this.c = c;
     
-    setMaxVelocity(10);
+    setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
   }
   
   public void update() {
+    
+    if (isOnGround()) {
+      getVelocity().y = 0;
+    }
     
     if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
       PVector currentAccel = getAcceleration();
@@ -25,6 +29,32 @@ public class Player extends CollidableObject{
     
     
     
+    PVector newVel = getVelocity().copy();
+    
+    boolean movingHorizontal = false;
+    
+    if (getGame().keyDown('a') || getGame().keyDown('A')) {
+      getAcceleration().x = -.2;
+      movingHorizontal = true;
+    }
+    
+    if (getGame().keyDown('d') || getGame().keyDown('D')) {
+      getAcceleration().x = .2;
+      movingHorizontal = true;
+    }
+    
+    if (!movingHorizontal) {
+      getAcceleration().x = 0;
+      getVelocity().x *= isOnGround() ? .7 : .96;
+    }
+    
+    //newVel.x = constrain(newVel.x, -3, 3);
+    //setVelocity(newVel);
+    
+
+    
+    
+    
     
     
     
@@ -35,27 +65,9 @@ public class Player extends CollidableObject{
     
     
     
+  
+    newVel = getVelocity().copy();
     Polygon translatedHitbox = getTranslatedHitbox();
-    
-    PVector newVel = getVelocity().copy();
-    
-    boolean movingHorizontal = false;
-    
-    if (getGame().keyDown('a') || getGame().keyDown('A')) {
-      newVel.x -= 2;
-      movingHorizontal = true;
-    }
-    
-    if (getGame().keyDown('d') || getGame().keyDown('D')) {
-      newVel.x += 2;
-      movingHorizontal = true;
-    }
-    
-    if (!movingHorizontal) {
-      newVel.x = 0;
-    }
-    
-    newVel.x = constrain(newVel.x, -3, 3);
     
     unstuckForce = null;
         
@@ -64,45 +76,14 @@ public class Player extends CollidableObject{
       if (cObject == this) continue;
       IntersectInfo intersection = translatedHitbox.intersects(cObject.getTranslatedHitbox());
       if (intersection.hasCollided()) {
-        //System.out.println(intersection);
-        //System.out.println(cObject);
-        PVector reverseForce = intersection.getReverseForce();
-        unstuckForce = reverseForce;
-        
-        //System.out.println(reverseForce);
-        
-        //setVelocity(reverseForce);
-        int xSign = (int) Math.signum(reverseForce.x);
-        int ySign = (int) Math.signum(reverseForce.y);
-        
-        int newXSign = (int) Math.signum(newVel.x);
-        int newYSign = (int) Math.signum(newVel.y);
-        
-        if (xSign == newXSign || xSign == 0) {
-          newVel.x = newXSign * max(abs(reverseForce.x), abs(newVel.x));
-        } else {
-          //newVel.x = reverseForce.x;
-          newVel.x = 0;
-        }
-        if (ySign == newYSign || ySign == 0) {
-          newVel.y = newYSign * max(abs(reverseForce.y), abs(newVel.y));
-        } else {
-          //newVel.y = reverseForce.y;
-          newVel.y = 0;
-        }
-        //newVel = PVector.add(newVel, reverseForce);
+        unstuckForce = intersection.getReverseForce();
       }
     }
-    
-    //System.out.println("Unstuck: " + unstuckForce + ", New: " + newVel);
-    
-    setVelocity(newVel);
+        
     PVector pos = getPosition();
     if (unstuckForce != null) {
       setPosition(pos.copy().add(unstuckForce));
     }
-    //if (rev!= null)
-    //setPosition(new PVector(pos.x, pos.y + rev.y));
     
     
     

@@ -2,7 +2,7 @@ public abstract class CollidableObject {
   private Polygon hitbox;
   private PVector position;
   private PVector velocity;
-  private float maxVelocity;
+  private PVector maxVelocity;
   private PVector acceleration;
   private Game game;
   
@@ -18,11 +18,11 @@ public abstract class CollidableObject {
     this.acceleration = acceleration;
   }
   
-  public void setMaxVelocity(float maxVelocity) {
+  public void setMaxVelocity(PVector maxVelocity) {
     this.maxVelocity = maxVelocity;
   }
   
-  public float getMaxVelocity() {
+  public PVector getMaxVelocity() {
     return maxVelocity;
   }
   
@@ -45,9 +45,12 @@ public abstract class CollidableObject {
   public void applyAcceleration() {
     velocity.add(acceleration);
     
-    if (velocity.mag() > maxVelocity) {
-      velocity = velocity.normalize().mult(maxVelocity);
-    }
+    velocity.x = constrain(velocity.x, -maxVelocity.x, maxVelocity.x);
+    velocity.y = constrain(velocity.y, -maxVelocity.y, maxVelocity.y);
+    
+    //if (velocity.mag() > maxVelocity) {
+    //  velocity = velocity.normalize().mult(maxVelocity);
+    //}
   }
   
   public void applyVelocity() {
