@@ -22,7 +22,7 @@ public class AudioInputManager {
   }
 
   void showAmplitude(){
-    println(amp.analyze());
+    println(amp.analyze() * 10);
   }
   
   void updatePitch(){
@@ -48,17 +48,21 @@ public class AudioInputManager {
     for (int i = 0; i < bands; i++){
       totalFrequency += spectrum[i];
     }
-    return (totalFrequency / bands) * 100000 - 2;
+    return (totalFrequency / bands) * 1000 - 2;
   }
   
   PVector getAcceleration(){
     float yValue = g.getWorld().getGravity().y;
-    if (pitch() > 5){
+    if (pitch() > 15){
       if (g.getWorld().getPlayer().isOnGround()) {
       yValue = -25;
       }
     }
-    return new PVector(amp.analyze() * 10, yValue);
+    float xValue = amp.analyze() * 10;
+    if (xValue < 1){
+      xValue = 0;
+    }
+    return new PVector(xValue, yValue);
     
   }
   

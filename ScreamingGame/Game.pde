@@ -37,7 +37,6 @@ public class Game {
   }
   
   public void runLoop() {
-    audioInManager.showPitch();
     pushMatrix();
     background(world.getBackgroundColor());
     float secsRunning = millis() / 1000.0;
@@ -50,10 +49,11 @@ public class Game {
     
     if (!playerInBounds) {
       System.out.println("PLAYER HAS DIED");
-      //System.exit(0);
+      System.exit(0);
     }
     
     //SET PLAYER ACCELERATION BASED ON SOUND
+    audioInManager.showAmplitude();
     world.getPlayer().setAcceleration(audioInManager.getAcceleration());
     //println(world.getPlayer().getPosition());
     
