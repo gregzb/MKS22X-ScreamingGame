@@ -16,6 +16,14 @@
   * System for keyboard input is added - the player may be controlled with A, D, and SPACE  -Greg
   * The player dies when outside the bounds of the screen -Greg
   
+### 5/21/2019
+  * Added basic ray casting classes -Greg
+  * Worked on getting the amplitude of sound to give the x acceleration - Emma
+  * Started getting the frequency to determine the move (jump/move/nothing) - Emma
+
+### 5/22/2019
+  * Finished getting the frequency to determine the move - Emma
+  
 # Authors
   * Greg Zborovsky
   * Emma Choi
