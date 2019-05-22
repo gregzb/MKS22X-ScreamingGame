@@ -3,7 +3,9 @@
   
 ## How To Run It
   Open up the project in Processing, press the play button and use A, D, and space to move around.
-  (Only tested in Processing version 3.5.3)
+  (Only tested in Processing version 3.5.3). 
+  New Version: You can now use sound (optionally clapping) to control the character. The loudness (amplitude) will cause the 
+  character to move more slowly/faster while the pitch (frequency). 
   
 ## Development Log
 ### 5/17/2019
