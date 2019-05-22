@@ -37,7 +37,7 @@ public class Game {
   }
   
   public void runLoop() {
-    audioInManager.showAmplitude();
+    audioInManager.showPitch();
     pushMatrix();
     background(world.getBackgroundColor());
     float secsRunning = millis() / 1000.0;
@@ -55,7 +55,7 @@ public class Game {
     
     //SET PLAYER ACCELERATION BASED ON SOUND
     world.getPlayer().setAcceleration(audioInManager.getAcceleration());
-    println(world.getPlayer().getPosition());
+    //println(world.getPlayer().getPosition());
     
     ArrayList<CollidableObject> cObjects = world.getCollidableObjects();
     for (CollidableObject cObject : cObjects) {

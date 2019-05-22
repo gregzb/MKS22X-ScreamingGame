@@ -18,6 +18,8 @@ public class Player extends CollidableObject{
       getVelocity().y = 0;
     }
     
+    
+    
     if (useKeys) {
     
     if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
