@@ -1,10 +1,12 @@
 public class Player extends CollidableObject{
   private color c;
   private PVector unstuckForce = null;
+  private boolean useKeys;
   
-  public Player(Game game, Polygon hitbox, PVector position, color c) {
+  public Player(Game game, Polygon hitbox, PVector position, color c, boolean useKeys) {
     super(game, hitbox, position);
     this.c = c;
+    this.useKeys = useKeys;
     
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
@@ -16,11 +18,15 @@ public class Player extends CollidableObject{
       getVelocity().y = 0;
     }
     
+    
+    
+    if (useKeys) {
+    
     if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
       PVector currentAccel = getAcceleration();
       setAcceleration(new PVector(currentAccel.x, -25));
     } else {
-      setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
+      setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
     }
     
     
@@ -29,7 +35,7 @@ public class Player extends CollidableObject{
     
     
     
-    PVector newVel = getVelocity().copy();
+    //PVector newVel = getVelocity().copy();
     
     boolean movingHorizontal = false;
     
@@ -45,6 +51,11 @@ public class Player extends CollidableObject{
     
     if (!movingHorizontal) {
       getAcceleration().x = 0;
+      getVelocity().x *= isOnGround() ? .7 : .96;
+    }
+    
+    } else {
+      //setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
       getVelocity().x *= isOnGround() ? .7 : .96;
     }
     
@@ -66,7 +77,7 @@ public class Player extends CollidableObject{
     
     
   
-    newVel = getVelocity().copy();
+    PVector newVel = getVelocity().copy();
     Polygon translatedHitbox = getTranslatedHitbox();
     
     unstuckForce = null;

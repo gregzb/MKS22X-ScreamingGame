@@ -8,12 +8,12 @@ public class Game {
   private Polygon baseBounds;
   
   public Game(Set<Character> keysDown) {
-    audioInManager = new AudioInputManager();
+    audioInManager = new AudioInputManager(this);
     this.keysDown = keysDown;
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
     
     world = new World(0);
-    Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127));
+    Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127), false);
     world.setPlayer(p);
     
     init();
@@ -51,6 +51,11 @@ public class Game {
       System.out.println("PLAYER HAS DIED");
       System.exit(0);
     }
+    
+    //SET PLAYER ACCELERATION BASED ON SOUND
+    audioInManager.showAmplitude();
+    world.getPlayer().setAcceleration(audioInManager.getAcceleration());
+    //println(world.getPlayer().getPosition());
     
     ArrayList<CollidableObject> cObjects = world.getCollidableObjects();
     for (CollidableObject cObject : cObjects) {
