@@ -9,9 +9,28 @@ public class Ray {
     dest = PVector.add(src, dirNormal);
   }
   
+  public void setDest(PVector dest) {
+    this.dest = dest;
+  }
+  
+  public void setDest(PVector dir, float rayLength) {
+    PVector dirNormal = dir.copy().normalize();
+    dirNormal.mult(rayLength);
+    this.dest = PVector.add(src, dirNormal);
+  }
+  
+  public String toString() {
+    return "Src: " + src + ", Dest: " + dest;
+  }
+  
   public Ray(PVector src, PVector dest) {
     this.src = src.copy();
     this.dest = dest.copy();
+  }
+  
+  public Ray(Ray r, PVector position) {
+    this.src = PVector.add(r.src, position);
+    this.dest = PVector.add(r.dest, position);
   }
   
   public ArrayList<RaycastInfo> raycast(Polygon p) {
@@ -40,17 +59,30 @@ public class Ray {
     float y4 = r.dest.y;
     
     float tANumer = ((y3 - y4) * (x1 - x3)) + ((x4 - x3) * (y1 - y3));
-    float tBNumer = ((y1 - y2) * (x1 - x3)) + ((x2 - x1) * (y1 - y3)
+    float tBNumer = ((y1 - y2) * (x1 - x3)) + ((x2 - x1) * (y1 - y3));
     float denom = ((x4 - x3) * (y1 - y2)) - ((x1 - x2) * (y4 - y3));
     
     if (denom == 0) {
       return new RaycastInfo(false, null, 0);
-    } else if (tANumer >= 0 && tANumer <= 1 && tBNumer >= 0 && tBNumer <= 1){
+    } else {
+      
       PVector p1 = src.copy();
       PVector p2 = dest.copy();
-      return new RaycastInfo(true, PVector.add(p1, PVector.multiply(PVector.subtract(p2, p1), tANumer)), tANumer);
-    } else {
-      return new RaycastInfo(false, PVector.add(p1, PVector.multiply(PVector.subtract(p2, p1), tANumer)), tANumer);
+        
+      float tA = tANumer / denom;
+      float tB = tBNumer / denom;
+      
+      if (tA >= 0 && tA <= 1 && tB >= 0 && tB<= 1){
+        return new RaycastInfo(true, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), tA);
+      } else {
+        return new RaycastInfo(false, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), tA);
+      }
     }
+  }
+  
+  public 
+  
+  void display() {
+    line(src.x, src.y, dest.x, dest.y);
   }
 }

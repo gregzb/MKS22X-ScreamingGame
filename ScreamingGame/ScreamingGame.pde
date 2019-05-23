@@ -7,7 +7,7 @@ void setup() {
   size(600,600);
   
   surface.setTitle("Screaming Game");
-  noStroke();
+   noStroke();
   
   keysDown = new HashSet<Character>();
   g = new Game(keysDown);

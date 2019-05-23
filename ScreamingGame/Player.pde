@@ -2,12 +2,29 @@ public class Player extends CollidableObject{
   private color c;
   private PVector unstuckForce = null;
   
+  Ray velocityRay;
+  Ray[] groundRays;
+  
   public Player(Game game, Polygon hitbox, PVector position, color c) {
     super(game, hitbox, position);
     this.c = c;
     
+    PVector defaultDir = getVelocity().copy().normalize();
+    if (defaultDir.mag() == 0) {
+      defaultDir = new PVector(0, 1);
+    }
+    
+    velocityRay = new Ray(hitbox.getCenter(), defaultDir, 30);
+    
+    groundRays = new Ray[2];
+    groundRays[0] = new Ray(new PVector(0, 0), new PVector(0, 1), 3);
+    PVector right = new PVector(0, hitbox.getCenter().x * 2);
+    groundRays[1] = new Ray(right, new PVector(0, 1), 3);
+    
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
+    
+    System.out.println(velocityRay);
   }
   
   public void update() {
@@ -62,6 +79,8 @@ public class Player extends CollidableObject{
     
     applyVelocity();
     
+    velocityRay.setDest(getVelocity().copy(), 30);
+    
     
     
     
@@ -96,6 +115,16 @@ public class Player extends CollidableObject{
   public void display() {
     getHitbox().setFill(c);
     shape(getHitbox().getShape(), getPosition().x, getPosition().y);
+    
+    //line(0, 0, 1000, 1000);
+    
+    stroke(0, 255, 0);
+    strokeWeight(3);
+    //fill(0, 255, 255);
+    //new Ray(velocityRay, getPosition()).display();
+    for (Ray r : groundRays) {
+      new Ray(r, getPosition()).display();
+    }
   }
   
   public void moveRight() {

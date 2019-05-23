@@ -1,4 +1,4 @@
-public class AudioInputManager {
+ public class AudioInputManager {
   public AudioInputManager() {
     
   }

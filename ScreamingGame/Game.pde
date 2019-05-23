@@ -53,12 +53,21 @@ public class Game {
     }
     
     ArrayList<CollidableObject> cObjects = world.getCollidableObjects();
-    for (CollidableObject cObject : cObjects) {
+    for (int i = cObjects.size() - 1; i >= 0; i--) {
+      CollidableObject cObject = cObjects.get(i);
       cObject.update();
     }
-    for (CollidableObject cObject : cObjects) {
+    
+    for (int i = cObjects.size() - 1; i >= 0; i--) {
+      CollidableObject cObject = cObjects.get(i);
       cObject.display();
     }
+    //for (CollidableObject cObject : reverse(cObjects)) {
+    //  cObject.update();
+    //}
+    //for (CollidableObject cObject : cObjects) {
+    //  cObject.display();
+    //}
     //plat1.update();
     //plat2.update();
     //plat1.display();
