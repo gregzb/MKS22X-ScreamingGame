@@ -22,6 +22,20 @@ public class Polygon {
     }
   }
   
+  public Rect getBounds() {
+    float bottom = Float.MIN_VALUE;
+    float top = Float.MAX_VALUE;
+    float left = Float.MAX_VALUE;
+    float right = Float.MIN_VALUE;
+    for (PVector p : points) {
+      bottom = max(bottom, p.y);
+      top = min(top, p.y);
+      left = min(left, p.x);
+      right = max(right, p.x);
+    }
+    return new Rect(new PVector(left, bottom), new PVector(right, top));
+  }
+  
   public PVector getCenter() {
     PVector total = new PVector();
     for(PVector point : points) {

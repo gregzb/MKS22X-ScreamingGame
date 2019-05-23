@@ -80,8 +80,6 @@ public class Ray {
     }
   }
   
-  public 
-  
   void display() {
     line(src.x, src.y, dest.x, dest.y);
   }

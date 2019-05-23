@@ -16,10 +16,14 @@ public class Player extends CollidableObject{
     
     velocityRay = new Ray(hitbox.getCenter(), defaultDir, 30);
     
+    Rect bounds = hitbox.getBounds();
+    
+    PVector left = new PVector(bounds.getBotLeft().x, bounds.getBotLeft().y);
+    PVector right = new PVector(bounds.getTopRight().x, bounds.getBotLeft().y);
+    
     groundRays = new Ray[2];
-    groundRays[0] = new Ray(new PVector(0, 0), new PVector(0, 1), 3);
-    PVector right = new PVector(0, hitbox.getCenter().x * 2);
-    groundRays[1] = new Ray(right, new PVector(0, 1), 3);
+    groundRays[0] = new Ray(left, new PVector(0, 1), 1);
+    groundRays[1] = new Ray(right, new PVector(0, 1), 1);
     
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
