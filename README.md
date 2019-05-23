@@ -24,7 +24,8 @@
   * Started getting the frequency to determine the move (jump/move/nothing) - Emma
 
 ### 5/22/2019
-  * Finished getting the frequency to determine the move - Emma
+  * ~~Finished getting the frequency to determine the move - Emma~~
+  * Realized that the frequency analyzer does not work as expected, used a frequency visualizer to better see the input -Greg
   
 # Authors
   * Greg Zborovsky
