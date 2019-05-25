@@ -27,6 +27,9 @@
   * ~~Finished getting the frequency to determine the move - Emma~~
   * Realized that the frequency analyzer does not work as expected, used a frequency visualizer to better see the input -Greg
   
+### 5/23/2019
+  * Added a few methods to begin making raycasting work -Greg
+  
 # Authors
   * Greg Zborovsky
   * Emma Choi
