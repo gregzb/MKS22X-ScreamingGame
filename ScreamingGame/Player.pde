@@ -125,7 +125,10 @@ public class Player extends CollidableObject{
     stroke(0, 255, 0);
     strokeWeight(3);
     //fill(0, 255, 255);
-    //new Ray(velocityRay, getPosition()).display();
+    new Ray(velocityRay, getPosition()).display();
+    
+    // println(isOnGround());
+    
     for (Ray r : groundRays) {
       new Ray(r, getPosition()).display();
     }
@@ -139,8 +142,26 @@ public class Player extends CollidableObject{
     
   }
   
-  public boolean isOnGround() {
+  public boolean old_isOnGround() {
     return unstuckForce != null && unstuckForce.y < 0;
+  }
+  
+  public boolean isOnGround() {
+    boolean intersects = false;
+    Polygon translatedHitbox = getTranslatedHitbox();
+    for (Ray r : groundRays) {
+    ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
+      for (CollidableObject cObject : cObjects) {
+        if (cObject == this) continue;
+        ArrayList<RaycastInfo> infos = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        if (infos.size() > 0) intersects = true;
+        //IntersectInfo intersection = translatedHitbox.intersects(cObject.getTranslatedHitbox());
+        //if (intersection.hasCollided()) {
+        //  unstuckForce = intersection.getReverseForce();
+        //}
+      }
+    }
+    return intersects;
   }
   
 }
