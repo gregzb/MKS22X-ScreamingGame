@@ -13,7 +13,7 @@ public class Game {
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
     
     world = new World(0);
-    Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127), false);
+    Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127), true);
     world.setPlayer(p);
     
     init();

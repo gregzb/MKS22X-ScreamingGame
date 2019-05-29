@@ -19,6 +19,14 @@ public class Ray {
     this.dest = PVector.add(src, dirNormal);
   }
   
+  public PVector getSrc() {
+    return src;
+  }
+  
+  public PVector getDest() {
+    return dest;
+  }
+  
   public String toString() {
     return "Src: " + src + ", Dest: " + dest;
   }
@@ -63,7 +71,7 @@ public class Ray {
     float denom = ((x4 - x3) * (y1 - y2)) - ((x1 - x2) * (y4 - y3));
     
     if (denom == 0) {
-      return new RaycastInfo(false, null, 0);
+      return new RaycastInfo(false, null, this, 0);
     } else {
       
       PVector p1 = src.copy();
@@ -73,9 +81,9 @@ public class Ray {
       float tB = tBNumer / denom;
       
       if (tA >= 0 && tA <= 1 && tB >= 0 && tB<= 1){
-        return new RaycastInfo(true, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), tA);
+        return new RaycastInfo(true, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), this, tA);
       } else {
-        return new RaycastInfo(false, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), tA);
+        return new RaycastInfo(false, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), this, tA);
       }
     }
   }
