@@ -90,11 +90,25 @@ public class Player extends CollidableObject {
 
 
     applyAcceleration();
-
+    
+    velocityRay.setDest(getVelocity().copy(), 1000);
+    
+    ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
+    for (CollidableObject cObject : cObjects) {
+      if (cObject == this) continue;
+      ArrayList<RaycastInfo> rInfo = new Ray(velocityRay, getPosition()).raycast(cObject.getTranslatedHitbox());
+      if (rInfo.size() > 1) {
+        println(rInfo);
+      }
+      if (rInfo.size() > 0) {
+        RaycastInfo info = rInfo.get(0);
+        //setVelocity(geinfo.getT());
+        //System.out.println(rInfo.size() + ", " + info.getT());
+        getVelocity().mult(info.getT());
+      }
+    }
+    
     applyVelocity();
-
-    velocityRay.setDest(getVelocity().copy(), 30);
-
 
 
 
@@ -117,16 +131,6 @@ public class Player extends CollidableObject {
     //if (unstuckForce != null) {
     //  setPosition(pos.copy().add(unstuckForce));
     //}
-    
-    ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
-    for (CollidableObject cObject : cObjects) {
-      if (cObject == this) continue;
-      ArrayList<RaycastInfo> rInfo = new Ray(velocityRay, getPosition()).raycast(cObject.getTranslatedHitbox());
-      if (rInfo.size() > 0) {
-        RaycastInfo info = rInfo.get(0);
-        
-      }
-    }
 
 
 

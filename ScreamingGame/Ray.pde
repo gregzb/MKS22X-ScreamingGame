@@ -19,6 +19,10 @@ public class Ray {
     this.dest = PVector.add(src, dirNormal);
   }
   
+  public void setSrc(PVector src) {
+    this.src = src;
+  }
+  
   public PVector getSrc() {
     return src;
   }

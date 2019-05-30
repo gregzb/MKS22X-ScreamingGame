@@ -1,4 +1,4 @@
-public class RaycastInfo {
+public class RaycastInfo implements Comparable<RaycastInfo>{
   private boolean hit;
   private PVector hitLocation;
   private float t;
@@ -24,6 +24,12 @@ public class RaycastInfo {
   
   public float getT() {
     return t;
+  }
+  
+  public int compareTo(RaycastInfo rInfo) {
+    //RaycastInfo other;
+    return 0;
+    
   }
   
   public String toString() {
