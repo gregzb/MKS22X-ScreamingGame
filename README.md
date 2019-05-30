@@ -30,6 +30,10 @@
 ### 5/23/2019
   * Added a few methods to begin making raycasting work -Greg
   
+### 5/29/2019
+  * Researched how to isolate pitch from the frequency bands -Emma
+  * Added several methods for using raycasting for collision -Greg
+  
 # Authors
   * Greg Zborovsky
   * Emma Choi
