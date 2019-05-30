@@ -1,4 +1,5 @@
 import processing.sound.*;
+import java.util.Arrays;
 
 PApplet pThis = this;
 
@@ -7,7 +8,7 @@ public class AudioInputManager {
   Amplitude amp;
   FFT fft;
   Game g;
-  int bands = 512;
+  int bands = 128;
   float[] spectrum = new float[bands];
   
   
@@ -44,11 +45,33 @@ public class AudioInputManager {
   
   float pitch(){
     updatePitch();
-    float totalFrequency = 0;
-    for (int i = 0; i < bands; i++){
-      totalFrequency += spectrum[i];
+    int[] maxIndices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    float[] maxFreqs = new float[10];
+    for (int i = 0; i < 10; i++){
+      maxFreqs[i] = spectrum[i];
     }
-    return (totalFrequency / bands) * 1000 - 2;
+    for (int i = 10; i < bands; i++){
+      float currentMin = min(maxFreqs);
+      if (spectrum[i] > currentMin){
+        int replacingIndex = find(currentMin, maxFreqs);
+        maxIndices[replacingIndex] = i;
+        maxFreqs[replacingIndex] = spectrum[i];
+      }
+    }
+    int indexSum = 0;
+    for (int index:maxIndices){
+      indexSum+= index;
+    }
+    return spectrum[indexSum / 10] * 1000;
+      
+  }
+  
+  int find(float num, float[] maxFreqs){
+    for (int i = 0; i < maxFreqs.length; i++){
+      if (maxFreqs[i] == num)
+        return i;
+    }
+    return -1;
   }
   
   PVector getAcceleration(){
