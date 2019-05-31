@@ -117,7 +117,7 @@ public class AudioInputManager {
   
   PVector getAcceleration(){
     float yValue = g.getWorld().getGravity().y;
-    if (pitch() > 30){
+    if (pitch() > 5){
       println(true);
       if (g.getWorld().getPlayer().isOnGround()) {
       yValue = -25;
