@@ -35,11 +35,11 @@
   * Researched how to isolate pitch from the frequency bands -Emma
   * Added several methods for using raycasting for collision -Greg
   
-#### 5/30/2019
+### 5/30/2019
   * Experimented with pitch and modified it to take the frequency of the top 10 averages -Emma
   * Tried another method taking the top 10 frequencies
 
-#### 5/31/2019
+### 5/31/2019
   * Another method to take the top frequency and its surrounding neighbors (to eliminate the issue with overloading noise), 
     finally seemed to have reached a working method -Emma
   
