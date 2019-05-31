@@ -5,7 +5,8 @@
   Open up the project in Processing, press the play button and use A, D, and space to move around.
   (Only tested in Processing version 3.5.3). 
   New Version: You can now use sound (optionally clapping) to control the character. The loudness (amplitude) will cause the 
-  character to move more slowly/faster while the pitch (frequency). 
+  character to move more slowly/faster while the pitch (frequency) should toggle between a jump/walk/none. 
+  New Version: The optional clapping has been eliminated with the sucessful addition of pitch to control movement. 
   
 ## Development Log
 ### 5/17/2019
@@ -33,6 +34,14 @@
 ### 5/29/2019
   * Researched how to isolate pitch from the frequency bands -Emma
   * Added several methods for using raycasting for collision -Greg
+  
+#### 5/30/2019
+  * Experimented with pitch and modified it to take the frequency of the top 10 averages -Emma
+  * Tried another method taking the top 10 frequencies
+
+#### 5/31/2019
+  * Another method to take the top frequency and its surrounding neighbors (to eliminate the issue with overloading noise), 
+    finally seemed to have reached a working method -Emma
   
 # Authors
   * Greg Zborovsky
