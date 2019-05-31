@@ -45,12 +45,33 @@ public class AudioInputManager {
   
   float pitch(){
     updatePitch();
+
+    int maxIndex = 0;
+    float maxFreq = spectrum[0];
+    for (int i = 1; i < 128; i++){
+      if (spectrum[i] > maxFreq){
+        maxIndex = i;
+        maxFreq = spectrum[i];
+      }
+    }
+    float totalFreqs = 0;
+    if (maxIndex > 5){
+      for (int i = maxIndex - 5; i < maxIndex + 5; i++){
+        totalFreqs += spectrum[i];
+      }
+    }else{
+      for (int i = maxIndex; i < maxIndex + 11; i++){
+        totalFreqs += spectrum[i];
+      }
+    }
+    return totalFreqs / 11 * 100;
+    /**
     int[] maxIndices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     float[] maxFreqs = new float[10];
     for (int i = 0; i < 10; i++){
       maxFreqs[i] = spectrum[i];
     }
-    for (int i = 10; i < bands; i++){
+    for (int i = 10; i < 128; i++){
       float currentMin = min(maxFreqs);
       if (spectrum[i] > currentMin){
         int replacingIndex = find(currentMin, maxFreqs);
@@ -62,7 +83,27 @@ public class AudioInputManager {
     for (int index:maxIndices){
       indexSum+= index;
     }
-    return spectrum[indexSum / 10] * 1000;
+    **/
+    /**
+    float[] maxFreqs = new float[10];
+    for (int i = 0; i < 10; i++){
+      maxFreqs[i] = spectrum[i];
+    }
+    for (int i = 10; i < 128; i++){
+      float currentMin = min(maxFreqs);
+      if (spectrum[i] > currentMin){
+        int replacingIndex = find(currentMin, maxFreqs);
+        maxFreqs[replacingIndex] = spectrum[i];
+      }
+    }
+    float totalFreqs = 0;
+    for (int i = 0; i < 10; i++){
+      totalFreqs += maxFreqs[i];
+    }
+    return totalFreqs * 1000;
+    **/
+    
+    //return spectrum[indexSum / 10] * 1000;
       
   }
   
@@ -76,7 +117,8 @@ public class AudioInputManager {
   
   PVector getAcceleration(){
     float yValue = g.getWorld().getGravity().y;
-    if (pitch() > 15){
+    if (pitch() > 30){
+      println(true);
       if (g.getWorld().getPlayer().isOnGround()) {
       yValue = -25;
       }
