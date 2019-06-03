@@ -53,7 +53,7 @@ public class Game {
     }
     
     //SET PLAYER ACCELERATION BASED ON SOUND
-    audioInManager.showAmplitude();
+    audioInManager.showPitch();
     world.getPlayer().setAcceleration(audioInManager.getAcceleration());
     //println(world.getPlayer().getPosition());
     
