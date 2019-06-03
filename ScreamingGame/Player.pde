@@ -3,8 +3,9 @@ public class Player extends CollidableObject {
   private PVector unstuckForce = null;
   private boolean useKeys;
 
-  Ray velocityRay;
+  //Ray velocityRay;
   Ray[] groundRays;
+  Ray[] movementRays;
 
   public Player(Game game, Polygon hitbox, PVector position, color c, boolean useKeys) {
     super(game, hitbox, position);
@@ -16,21 +17,33 @@ public class Player extends CollidableObject {
       defaultDir = new PVector(0, 1);
     }
 
-    velocityRay = new Ray(hitbox.getCenter(), defaultDir, 30);
+    //velocityRay = new Ray(hitbox.getCenter(), defaultDir, 30);
 
     Rect bounds = hitbox.getBounds();
 
-    PVector left = new PVector(bounds.getBotLeft().x, bounds.getBotLeft().y);
-    PVector right = new PVector(bounds.getTopRight().x, bounds.getBotLeft().y);
+    PVector botLeft = new PVector(bounds.getBotLeft().x, bounds.getBotLeft().y);
+    PVector botRight = new PVector(bounds.getTopRight().x, bounds.getBotLeft().y);
+    PVector topRight = new PVector(bounds.getTopRight().x, bounds.getTopRight().y);
+    PVector topLeft = new PVector(bounds.getBotLeft().x, bounds.getTopRight().y);
 
     groundRays = new Ray[2];
-    groundRays[0] = new Ray(left, new PVector(0, 1), 1);
-    groundRays[1] = new Ray(right, new PVector(0, 1), 1);
+    groundRays[0] = new Ray(botLeft, new PVector(0, 1), 1);
+    groundRays[1] = new Ray(botRight, new PVector(0, 1), 1);
+
+    movementRays = new Ray[8];
+    movementRays[0] = new Ray(botRight, new PVector(0, 1), 1);
+    movementRays[1] = new Ray(topRight, new PVector(0, -1), 1);
+    movementRays[2] = new Ray(topLeft, new PVector(0, -1), 1);
+    movementRays[3] = new Ray(botLeft, new PVector(0, 1), 1);
+    movementRays[4] = new Ray(botRight, new PVector(1, 0), 1);
+    movementRays[5] = new Ray(topRight, new PVector(1, 0), 1);
+    movementRays[6] = new Ray(topLeft, new PVector(-1, 0), 1);
+    movementRays[7] = new Ray(botLeft, new PVector(-1, 0), 1);
 
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
 
-    System.out.println(velocityRay);
+    //System.out.println(velocityRay);
   }
 
   public void update() {
@@ -46,6 +59,7 @@ public class Player extends CollidableObject {
       if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
         PVector currentAccel = getAcceleration();
         setAcceleration(new PVector(currentAccel.x, -25));
+        println("JUMP");
       } else {
         setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
       }
@@ -90,24 +104,34 @@ public class Player extends CollidableObject {
 
 
     applyAcceleration();
-    
-    velocityRay.setDest(getVelocity().copy(), 1000);
-    
+
+    //velocityRay.setDest(getVelocity().copy(), 30);
+
+    for (int i = 0; i < movementRays.length/2; i++) {
+      movementRays[i].setDest(new PVector(0, getVelocity().y), getVelocity().y);
+    }
+
+    for (int i = movementRays.length/2; i < movementRays.length; i++) {
+      movementRays[i].setDest(new PVector(getVelocity().x, 0), getVelocity().x);
+    }
+
     ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
     for (CollidableObject cObject : cObjects) {
       if (cObject == this) continue;
-      ArrayList<RaycastInfo> rInfo = new Ray(velocityRay, getPosition()).raycast(cObject.getTranslatedHitbox());
-      if (rInfo.size() > 1) {
-        println(rInfo);
-      }
-      if (rInfo.size() > 0) {
-        RaycastInfo info = rInfo.get(0);
-        //setVelocity(geinfo.getT());
-        //System.out.println(rInfo.size() + ", " + info.getT());
-        getVelocity().mult(info.getT());
+      for (Ray r : movementRays) {
+        ArrayList<RaycastInfo> rInfo = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        if (rInfo.size() > 1) {
+          //println(rInfo);
+        }
+        if (rInfo.size() > 0) {
+          RaycastInfo info = rInfo.get(0);
+          //setVelocity(geinfo.getT());
+          //System.out.println(rInfo.size() + ", " + info.getT());
+          getVelocity().mult(info.getT());
+        }
       }
     }
-    
+
     applyVelocity();
 
 
@@ -149,7 +173,11 @@ public class Player extends CollidableObject {
     stroke(0, 255, 0);
     strokeWeight(3);
     //fill(0, 255, 255);
-    new Ray(velocityRay, getPosition()).display();
+    //new Ray(velocityRay, getPosition()).display();
+
+    for (Ray r : movementRays) {
+      new Ray(r, getPosition()).display();
+    }
 
     // println(isOnGround());
 
