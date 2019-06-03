@@ -63,6 +63,13 @@ public class Player extends CollidableObject {
     println();
 
     println(isOnGround(true));
+    
+    Ray groundRay = null;
+    
+    if (isOnGround(true)) {
+      groundRay = getGroundRay(true);
+    }
+    
     if (useKeys) {
       
       if (getGame().keyDown('h') && !getGame().prevKeyDown('h')) {
@@ -121,6 +128,33 @@ public class Player extends CollidableObject {
     applyAcceleration();
     println(getAcceleration());
     println(getVelocity());
+    
+    
+    
+    
+    if (groundRay != null) {
+      PVector src = groundRay.getSrc().copy();
+      PVector dest = groundRay.getDest().copy();
+      
+      //PVector lower = src.y <= dest.y ? src : dest;
+      //PVector upper = lower == src ? dest : src;
+      
+      PVector lower = src.x <= dest.x ? src : dest;
+      PVector upper = lower == src ? dest : src;
+      
+      float valY = lower.y-upper.y;
+      float valX = lower.x-upper.x;
+      
+      if (valX != 0) {
+        float slope = valY/valX;
+        
+        getVelocity().y = min(getVelocity().y, getVelocity().x * slope);
+      }
+            
+    }
+    
+    
+    
 
     //velocityRay.setDest(getVelocity().copy(), 30);
 
@@ -190,7 +224,7 @@ public class Player extends CollidableObject {
     if (vel.x != 0 && vel.y != 0) {
       float pWidth = (topRight.x-topLeft.x) / 2;
       float pHeight = (botRight.y-topRight.y) / 2;
-      PVector corner = new PVector(pWidth * vel.x/abs(vel.x), pHeight * vel.y/abs(vel.y));
+      PVector corner = new PVector(pWidth * vel.x/abs(vel.x), pHeight * vel.y/abs(vel.y)).mult(.9);
 
       temp = new Ray(corner, vel.copy(), vel.mag());
       //movementRays.add(new Ray(temp, getPosition()));
@@ -252,8 +286,8 @@ public class Player extends CollidableObject {
               }
               neitherDetect = false;
             } else if (neitherDetect){
-              yMult = min(yMult, info.getT());
-              xMult = min(xMult, info.getT());
+              yMult = min(yMult, info.getT()*.99);
+              xMult = min(xMult, info.getT()*.99);
             }
           }
         }
@@ -331,7 +365,6 @@ public class Player extends CollidableObject {
 
   public boolean isOnGround(boolean longRays) {
     boolean intersects = false;
-    Polygon translatedHitbox = getTranslatedHitbox();
     int start = longRays ? groundRays.length/2 : 0;
     for (int i = start; i < start + groundRays.length/2; i++) {
       Ray r = groundRays[i];
@@ -339,18 +372,23 @@ public class Player extends CollidableObject {
       for (CollidableObject cObject : cObjects) {
         if (cObject == this) continue;
         ArrayList<RaycastInfo> infos = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
-        //ArrayList<RaycastInfo> infosTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
-        //ArrayList<RaycastInfo> infos = new ArrayList<RaycastInfo>();
-        //for (RaycastInfo inf : infosTemp) {
-        //  if (inf.hasHit()) infos.add(inf);
-        //}
         if (infos.size() > 0) intersects = true;
-        //IntersectInfo intersection = translatedHitbox.intersects(cObject.getTranslatedHitbox());
-        //if (intersection.hasCollided()) {
-        //  unstuckForce = intersection.getReverseForce();
-        //}
       }
     }
     return intersects;
   }
+  
+  public Ray getGroundRay(boolean longRays) {
+    int start = longRays ? groundRays.length/2 : 0;
+    for (int i = start; i < start + groundRays.length/2; i++) {
+      Ray r = groundRays[i];
+      ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
+      for (CollidableObject cObject : cObjects) {
+        if (cObject == this) continue;
+        ArrayList<RaycastInfo> infos = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        if (infos.size() > 0) return infos.get(0).getHitRay();
+      }
+    }
+    return null;
+  } //<>//
 }
