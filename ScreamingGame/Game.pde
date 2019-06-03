@@ -40,7 +40,7 @@ public class Game {
     pushMatrix();
     background(world.getBackgroundColor());
     float secsRunning = millis() / 1000.0;
-    float pixelsPerSeconds = 50;
+    float pixelsPerSeconds = 0;
     translate(-(secsRunning * pixelsPerSeconds), 0);
     
     Polygon actualBounds = new Polygon(baseBounds, new PVector(secsRunning * pixelsPerSeconds, 0));
