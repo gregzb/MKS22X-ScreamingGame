@@ -51,9 +51,9 @@ public class Ray {
     
     for (Ray ray : rays) {
       RaycastInfo raycastInfo = raycast(ray);
-      //if (raycastInfo.hasHit()) {
+      if (raycastInfo.hasHit()) {
         infos.add(raycastInfo);
-      //}
+      }
       //infos.add(raycastInfo);
     }
     
@@ -76,7 +76,7 @@ public class Ray {
     float denom = ((x4 - x3) * (y1 - y2)) - ((x1 - x2) * (y4 - y3));
     
     if (denom == 0) {
-      return new RaycastInfo(false, null, this, -1, -1);
+      return new RaycastInfo(false, null, this, r, -1);
     } else {
       
       PVector p1 = src.copy();
@@ -86,9 +86,9 @@ public class Ray {
       float tB = tBNumer / denom;
       
       if (tA >= 0 && tA <= 1 && tB >= 0 && tB<= 1){
-        return new RaycastInfo(true, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), this, tA, tB);
+        return new RaycastInfo(true, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), this, r, tA);
       } else {
-        return new RaycastInfo(false, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), this, tA, tB);
+        return new RaycastInfo(false, PVector.add(p1, PVector.mult(PVector.add(p2, PVector.mult(p1, -1)), tA)), this, r, tA);
       }
     }
   }

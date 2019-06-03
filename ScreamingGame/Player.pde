@@ -32,9 +32,11 @@ public class Player extends CollidableObject {
     topRight = new PVector(bounds.getTopRight().x, bounds.getTopRight().y);
     topLeft = new PVector(bounds.getBotLeft().x, bounds.getTopRight().y);
 
-    groundRays = new Ray[2];
+    groundRays = new Ray[4];
     groundRays[0] = new Ray(PVector.add(botLeft, new PVector(.01, 0)), new PVector(0, 1), .5);
     groundRays[1] = new Ray(PVector.add(botRight, new PVector(-.01, 0)), new PVector(0, 1), .5);
+    groundRays[2] = new Ray(PVector.add(botLeft, new PVector(.01, 0)), new PVector(0, 1), 2);
+    groundRays[3] = new Ray(PVector.add(botRight, new PVector(-.01, 0)), new PVector(0, 1), 2);
 
     //movementRays = new Ray[8];
     //movementRays[0] = new Ray(botRight, new PVector(0, 1), 1);
@@ -54,20 +56,20 @@ public class Player extends CollidableObject {
 
   public void update() {
 
-    if (isOnGround()) {
+    if (isOnGround(false)) {
       getVelocity().y = 0;
     }
 
     println();
 
-    println(isOnGround());
+    println(isOnGround(true));
     if (useKeys) {
       
       if (getGame().keyDown('h') && !getGame().prevKeyDown('h')) {
         println(); //<>//
       }
 
-      if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
+      if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround(true)) {
         PVector currentAccel = getAcceleration();
         setAcceleration(new PVector(currentAccel.x, -25));
         println("JUMP");
@@ -97,13 +99,13 @@ public class Player extends CollidableObject {
 
       if (!movingHorizontal) {
         getAcceleration().x = 0;
-        getVelocity().x *= isOnGround() ? .7 : .96;
+        getVelocity().x *= isOnGround(true) ? .7 : .96;
       } else {
         println("KEY DOWN");
       }
     } else {
       //setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
-      getVelocity().x *= isOnGround() ? .7 : .96;
+      getVelocity().x *= isOnGround(true) ? .7 : .96;
     }
 
     //newVel.x = constrain(newVel.x, -3, 3);
@@ -217,13 +219,14 @@ public class Player extends CollidableObject {
         Ray r = movementRays.get(i);
 
         if (r != null) {
-          ArrayList<RaycastInfo> rInfoTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+          ArrayList<RaycastInfo> rInfo = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+          //ArrayList<RaycastInfo> rInfoTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
           //ArrayList<RaycastInfo> rInfoTemp = r.raycast(cObject.getTranslatedHitbox());
-          ArrayList<RaycastInfo> rInfo = new ArrayList<RaycastInfo>();
-          for (RaycastInfo inf : rInfoTemp) {
-            //if (inf.hasHit() || (inf.getT() >= 0 && inf.getT() <= 0 && inf.getTOther() >= 0 && inf.getTOther() < 1)) rInfo.add(inf);
-            if (inf.hasHit()) rInfo.add(inf);
-          }
+          //ArrayList<RaycastInfo> rInfo = new ArrayList<RaycastInfo>();
+          //for (RaycastInfo inf : rInfoTemp) {
+          //  //if (inf.hasHit() || (inf.getT() >= 0 && inf.getT() <= 0 && inf.getTOther() >= 0 && inf.getTOther() < 1)) rInfo.add(inf);
+          //  if (inf.hasHit()) rInfo.add(inf);
+          //}
           //if (rInfo.size() > 1) {
           //  //println(rInfo);
           //}
@@ -326,18 +329,21 @@ public class Player extends CollidableObject {
     return unstuckForce != null && unstuckForce.y < 0;
   }
 
-  public boolean isOnGround() {
+  public boolean isOnGround(boolean longRays) {
     boolean intersects = false;
     Polygon translatedHitbox = getTranslatedHitbox();
-    for (Ray r : groundRays) {
+    int start = longRays ? groundRays.length/2 : 0;
+    for (int i = start; i < start + groundRays.length/2; i++) {
+      Ray r = groundRays[i];
       ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
       for (CollidableObject cObject : cObjects) {
         if (cObject == this) continue;
-        ArrayList<RaycastInfo> infosTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
-        ArrayList<RaycastInfo> infos = new ArrayList<RaycastInfo>();
-        for (RaycastInfo inf : infosTemp) {
-          if (inf.hasHit()) infos.add(inf);
-        }
+        ArrayList<RaycastInfo> infos = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        //ArrayList<RaycastInfo> infosTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        //ArrayList<RaycastInfo> infos = new ArrayList<RaycastInfo>();
+        //for (RaycastInfo inf : infosTemp) {
+        //  if (inf.hasHit()) infos.add(inf);
+        //}
         if (infos.size() > 0) intersects = true;
         //IntersectInfo intersection = translatedHitbox.intersects(cObject.getTranslatedHitbox());
         //if (intersection.hasCollided()) {

@@ -2,14 +2,14 @@ public class RaycastInfo implements Comparable<RaycastInfo>{
   private boolean hit;
   private PVector hitLocation;
   private float t;
-  private float tOther;
   private Ray src;
-  public RaycastInfo(boolean hit, PVector hitLocation, Ray src, float t, float tOther) {
+  private Ray hitRay;
+  public RaycastInfo(boolean hit, PVector hitLocation, Ray src, Ray hitRay, float t) {
     this.hit = hit;
+    this.hitRay = hitRay;
     this.src = src;
     this.hitLocation = hitLocation;
     this.t = t;
-    this.tOther = tOther;
   }
   
   public boolean hasHit() {
@@ -24,12 +24,12 @@ public class RaycastInfo implements Comparable<RaycastInfo>{
     return src;
   }
   
-  public float getT() {
-    return t;
+  public Ray getHitRay() {
+    return hitRay;
   }
   
-  public float getTOther() {
-    return tOther;
+  public float getT() {
+    return t;
   }
   
   public int compareTo(RaycastInfo rInfo) {
