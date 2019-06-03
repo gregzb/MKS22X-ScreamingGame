@@ -5,7 +5,13 @@ public class Player extends CollidableObject {
 
   //Ray velocityRay;
   Ray[] groundRays;
-  Ray[] movementRays;
+  //Ray[] movementRays;
+  ArrayList<Ray> movementRays;
+
+  PVector botLeft;
+  PVector botRight;
+  PVector topRight;
+  PVector topLeft;
 
   public Player(Game game, Polygon hitbox, PVector position, color c, boolean useKeys) {
     super(game, hitbox, position);
@@ -21,24 +27,24 @@ public class Player extends CollidableObject {
 
     Rect bounds = hitbox.getBounds();
 
-    PVector botLeft = new PVector(bounds.getBotLeft().x, bounds.getBotLeft().y);
-    PVector botRight = new PVector(bounds.getTopRight().x, bounds.getBotLeft().y);
-    PVector topRight = new PVector(bounds.getTopRight().x, bounds.getTopRight().y);
-    PVector topLeft = new PVector(bounds.getBotLeft().x, bounds.getTopRight().y);
+    botLeft = new PVector(bounds.getBotLeft().x, bounds.getBotLeft().y);
+    botRight = new PVector(bounds.getTopRight().x, bounds.getBotLeft().y);
+    topRight = new PVector(bounds.getTopRight().x, bounds.getTopRight().y);
+    topLeft = new PVector(bounds.getBotLeft().x, bounds.getTopRight().y);
 
     groundRays = new Ray[2];
     groundRays[0] = new Ray(botLeft, new PVector(0, 1), 1);
     groundRays[1] = new Ray(botRight, new PVector(0, 1), 1);
 
-    movementRays = new Ray[8];
-    movementRays[0] = new Ray(botRight, new PVector(0, 1), 1);
-    movementRays[1] = new Ray(topRight, new PVector(0, -1), 1);
-    movementRays[2] = new Ray(topLeft, new PVector(0, -1), 1);
-    movementRays[3] = new Ray(botLeft, new PVector(0, 1), 1);
-    movementRays[4] = new Ray(PVector.add(botRight, new PVector(0, -1)), new PVector(1, 0), 1);
-    movementRays[5] = new Ray(PVector.add(topRight, new PVector(0, 1)), new PVector(1, 0), 1);
-    movementRays[6] = new Ray(PVector.add(topLeft, new PVector(0, 1)), new PVector(-1, 0), 1);
-    movementRays[7] = new Ray(PVector.add(botLeft, new PVector(0, -1)), new PVector(-1, 0), 1);
+    //movementRays = new Ray[8];
+    //movementRays[0] = new Ray(botRight, new PVector(0, 1), 1);
+    //movementRays[1] = new Ray(topRight, new PVector(0, -1), 1);
+    //movementRays[2] = new Ray(topLeft, new PVector(0, -1), 1);
+    //movementRays[3] = new Ray(botLeft, new PVector(0, 1), 1);
+    //movementRays[4] = new Ray(PVector.add(botRight, new PVector(0, -1)), new PVector(1, 0), 1);
+    //movementRays[5] = new Ray(PVector.add(topRight, new PVector(0, 1)), new PVector(1, 0), 1);
+    //movementRays[6] = new Ray(PVector.add(topLeft, new PVector(0, 1)), new PVector(-1, 0), 1);
+    //movementRays[7] = new Ray(PVector.add(botLeft, new PVector(0, -1)), new PVector(-1, 0), 1);
 
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
@@ -53,9 +59,13 @@ public class Player extends CollidableObject {
     }
 
     println();
-    
+
     println(isOnGround());
     if (useKeys) {
+      
+      if (getGame().keyDown('h') && !getGame().prevKeyDown('h')) {
+        println(); //<>//
+      }
 
       if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
         PVector currentAccel = getAcceleration();
@@ -112,62 +122,140 @@ public class Player extends CollidableObject {
 
     //velocityRay.setDest(getVelocity().copy(), 30);
 
-    for (int i = 0; i < movementRays.length/2; i++) {
-      //float val = min(0, getVelocity().y);
-      //movementRays[i].setDest(new PVector(0, getVelocity().y), val);
-      movementRays[i].setDest(new PVector(0, getVelocity().y), abs(getVelocity().y));
+    //for (int i = 0; i < movementRays.length/2; i++) {
+    //  //float val = min(0, getVelocity().y);
+    //  //movementRays[i].setDest(new PVector(0, getVelocity().y), val);
+    //  movementRays[i].setDest(new PVector(0, getVelocity().y), abs(getVelocity().y));
+    //}
+
+    //for (int i = movementRays.length/2; i < movementRays.length; i++) {
+    //  //float val = min(0, getVelocity().x);
+    //  //movementRays[i].setDest(new PVector(getVelocity().x, 0), val);
+    //  movementRays[i].setDest(new PVector(getVelocity().x, 0), abs(getVelocity().x));
+    //}
+
+    //for (Ray r : movementRays) {
+    //  println(r);
+    //}
+
+
+
+
+    movementRays = new ArrayList<Ray>();
+
+    PVector vel = getVelocity().copy();
+
+    Ray temp;
+
+    if (vel.x < 0) {
+      temp = new Ray(PVector.add(botLeft, new PVector(0, -.01)), new PVector(-1, 0), abs(vel.x));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+      temp = new Ray(PVector.add(topLeft, new PVector(0, .01)), new PVector(-1, 0), abs(vel.x));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+    } else if (vel.x > 0) {
+      temp = new Ray(PVector.add(botRight, new PVector(0, -.01)), new PVector(1, 0), abs(vel.x));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+      temp = new Ray(PVector.add(topRight, new PVector(0, .01)), new PVector(1, 0), abs(vel.x));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+    } else {
+      movementRays.add(null);
+      movementRays.add(null);
     }
 
-    for (int i = movementRays.length/2; i < movementRays.length; i++) {
-      //float val = min(0, getVelocity().x);
-      //movementRays[i].setDest(new PVector(getVelocity().x, 0), val);
-      movementRays[i].setDest(new PVector(getVelocity().x, 0), abs(getVelocity().x));
+    if (vel.y < 0) {
+      temp = new Ray(PVector.add(topLeft, new PVector(.01, 0)), new PVector(0, -1), abs(vel.y));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+      temp = new Ray(PVector.add(topRight, new PVector(-.01, 0)), new PVector(0, -1), abs(vel.y));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+    } else if (vel.y > 0) {
+      temp = new Ray(PVector.add(botLeft, new PVector(.01, 0)), new PVector(0, 1), abs(vel.y));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+      temp = new Ray(PVector.add(botRight, new PVector(-.01, 0)), new PVector(0, 1), abs(vel.y));
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+    } else {
+      movementRays.add(null);
+      movementRays.add(null);
     }
-        
-    for (Ray r : movementRays) {
-      println(r);
+
+    if (vel.x != 0 && vel.y != 0) {
+      float pWidth = (topRight.x-topLeft.x) / 2;
+      float pHeight = (botRight.y-topRight.y) / 2;
+      PVector corner = new PVector(pWidth * vel.x/abs(vel.x), pHeight * vel.y/abs(vel.y));
+
+      temp = new Ray(corner, vel.copy(), vel.mag());
+      //movementRays.add(new Ray(temp, getPosition()));
+      movementRays.add(temp);
+    } else {
+      movementRays.add(null);
     }
+    
+    println(movementRays);
+    println();
+
+
+
+
 
     ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
     for (CollidableObject cObject : cObjects) {
       if (cObject == this) continue;
-      
+
       float xMult = 1;
       float yMult = 1;
       
-      for (int i = 0; i < movementRays.length; i++) {
-        Ray r = movementRays[i];
-        ArrayList<RaycastInfo> rInfoTemp = new Ray(r, getPosition().copy().add(getVelocity().copy().mult(0.1))).raycast(cObject.getTranslatedHitbox());
-        ArrayList<RaycastInfo> rInfo = new ArrayList<RaycastInfo>();
-        for (RaycastInfo inf : rInfoTemp) {
-          if (inf.hasHit() || (inf.getT() >= -.1 && inf.getT() <= 0 && inf.getTOther() >= 0 && inf.getTOther() < 1)) rInfo.add(inf);
-        }
-        if (rInfo.size() > 1) {
-          //println(rInfo);
-        }
-        if (i == 6 || i == 7) {
-          println("i is i: " + i + ", " + rInfo.size());
-        }
-        if (rInfo.size() > 0) {
-          RaycastInfo info = rInfo.get(0);
-          //setVelocity(geinfo.getT());
-          //System.out.println(rInfo.size() + ", " + info.getT());
-          //getVelocity().mult(info.getT());
-          println(i + ": " + info.getT());
-          if (i < movementRays.length/2) {
-            //println(i + ": " + info.getT());
-            //getVelocity().y *= info.getT();
-            if (info.getT() >= 0) {
-            yMult = min(yMult, info.getT());
+      boolean neitherDetect = true;
+
+      for (int i = 0; i < movementRays.size(); i++) {
+        Ray r = movementRays.get(i);
+
+        if (r != null) {
+          ArrayList<RaycastInfo> rInfoTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+          //ArrayList<RaycastInfo> rInfoTemp = r.raycast(cObject.getTranslatedHitbox());
+          ArrayList<RaycastInfo> rInfo = new ArrayList<RaycastInfo>();
+          for (RaycastInfo inf : rInfoTemp) {
+            //if (inf.hasHit() || (inf.getT() >= 0 && inf.getT() <= 0 && inf.getTOther() >= 0 && inf.getTOther() < 1)) rInfo.add(inf);
+            if (inf.hasHit()) rInfo.add(inf);
+          }
+          //if (rInfo.size() > 1) {
+          //  //println(rInfo);
+          //}
+          //if (i == 6 || i == 7) {
+          //  println("i is i: " + i + ", " + rInfo.size());
+          //}
+          if (rInfo.size() > 0) {
+            RaycastInfo info = rInfo.get(0);
+            //setVelocity(geinfo.getT());
+            //System.out.println(rInfo.size() + ", " + info.getT());
+            //getVelocity().mult(info.getT());
+            println(i + ": " + info.getT());
+            if (i < 2) {
+              //println(i + ": " + info.getT());
+              //getVelocity().y *= info.getT();
+              xMult = min(xMult, info.getT());
+              neitherDetect = false;
+            } else if (i < 4){
+              //println(i + ": " + info.getT());
+              //getVelocity().x *= info.getT();
+              if (info.getT() >= 0) {
+                yMult = min(yMult, info.getT());
+              }
+              neitherDetect = false;
+            } else if (neitherDetect){
+              yMult = min(yMult, info.getT());
+              xMult = min(xMult, info.getT());
             }
-          } else {
-            //println(i + ": " + info.getT());
-            //getVelocity().x *= info.getT();
-            xMult = min(xMult, info.getT());
           }
         }
       }
-      
+
       getVelocity().x *= xMult;
       getVelocity().y *= yMult;
     }
@@ -216,14 +304,16 @@ public class Player extends CollidableObject {
     //new Ray(velocityRay, getPosition()).display();
 
     for (Ray r : movementRays) {
-      new Ray(r, getPosition()).display();
+      if (r != null) {
+        new Ray(r, getPosition()).display();
+      }
     }
 
     // println(isOnGround());
 
-    for (Ray r : groundRays) {
-      new Ray(r, getPosition()).display();
-    }
+    //for (Ray r : groundRays) {
+    //  new Ray(r, getPosition()).display();
+    //}
   }
 
   public void moveRight() {
