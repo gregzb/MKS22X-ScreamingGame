@@ -10,8 +10,10 @@ public class AudioInputManager {
   Game g;
   int bands = 128;
   float[] spectrum = new float[bands];
-  
-  
+  float lastAmplitude = 0;
+
+  ArrayList<ArrayList<Float>> spectrumHistory = new ArrayList<ArrayList<Float>>();
+
   public AudioInputManager(Game g) {
     this.g = g;
     mic = new AudioIn(pThis, 0);
@@ -22,120 +24,64 @@ public class AudioInputManager {
     fft.input(mic);
   }
 
-  void showAmplitude(){
-    println(amp.analyze() * 10);
-  }
-  
-  void updatePitch(){
-    fft.analyze(spectrum);
-  }
-  
-  //private int calculateBackgroundFrequency(){
-  // int totalFrequency = 0;
-  // for (int i = 0; i < bands; i++){
-  //   totalFrequency += spectrum[i];
-  // }
-  // return totalFrequency / bands;
-  //}
-  
-  void showPitch(){
-    //println(fft.analyze(spectrum));
-    println(pitch());
-  }
-  
-  float pitch(){
-    updatePitch();
+  void update() {
+    lastAmplitude = amp.analyze();
+    float[] tempSpectrum = fft.analyze();
 
-    int maxIndex = 0;
-    float maxFreq = spectrum[0];
-    for (int i = 1; i < 128; i++){
-      if (spectrum[i] > maxFreq){
-        maxIndex = i;
-        maxFreq = spectrum[i];
+    ArrayList<Float> temp = new ArrayList();
+    for (float val : tempSpectrum) {
+      temp.add(val);
+    }
+
+    spectrumHistory.add(temp);
+
+    if (spectrumHistory.size() > 4) {
+      spectrumHistory.remove(0);
+    }
+
+    for (int i = 0; i < spectrum.length; i++) {
+      float val = 0;
+      for (ArrayList<Float> timeVal : spectrumHistory) {
+        val += timeVal.get(i);
       }
+      val /= spectrumHistory.size();
+      spectrum[i] = val;
     }
-    float totalFreqs = 0;
-    if (maxIndex > 5){
-      for (int i = maxIndex - 5; i < maxIndex + 5; i++){
-        totalFreqs += spectrum[i];
-      }
-    }else{
-      for (int i = maxIndex; i < maxIndex + 11; i++){
-        totalFreqs += spectrum[i];
-      }
-    }
-    return totalFreqs / 11 * 100;
-    /**
-    int[] maxIndices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    float[] maxFreqs = new float[10];
-    for (int i = 0; i < 10; i++){
-      maxFreqs[i] = spectrum[i];
-    }
-    for (int i = 10; i < 128; i++){
-      float currentMin = min(maxFreqs);
-      if (spectrum[i] > currentMin){
-        int replacingIndex = find(currentMin, maxFreqs);
-        maxIndices[replacingIndex] = i;
-        maxFreqs[replacingIndex] = spectrum[i];
-      }
-    }
-    int indexSum = 0;
-    for (int index:maxIndices){
-      indexSum+= index;
-    }
-    **/
-    /**
-    float[] maxFreqs = new float[10];
-    for (int i = 0; i < 10; i++){
-      maxFreqs[i] = spectrum[i];
-    }
-    for (int i = 10; i < 128; i++){
-      float currentMin = min(maxFreqs);
-      if (spectrum[i] > currentMin){
-        int replacingIndex = find(currentMin, maxFreqs);
-        maxFreqs[replacingIndex] = spectrum[i];
-      }
-    }
-    float totalFreqs = 0;
-    for (int i = 0; i < 10; i++){
-      totalFreqs += maxFreqs[i];
-    }
-    return totalFreqs * 1000;
-    **/
-    
-    //return spectrum[indexSum / 10] * 1000;
-      
   }
-  
-  int find(float num, float[] maxFreqs){
-    for (int i = 0; i < maxFreqs.length; i++){
-      if (maxFreqs[i] == num)
-        return i;
-    }
-    return -1;
+
+  float getAmplitude() {
+    return lastAmplitude * 10;
   }
-  
-  PVector getAcceleration(){
+
+  float getPitch() {    
+    float sumProducts = 0;
+    float sumVals = 0;
+
+    for (int i = 0; i < spectrum.length; i++) {
+      float val = spectrum[i];
+      sumProducts += i * val;
+      sumVals += val;
+    }
+
+    return sumProducts/sumVals;
+  }
+
+  PVector getAcceleration() {
     float yValue = g.getWorld().getGravity().y;
-    if (pitch() > 5){
-      println(true);
-      if (g.getWorld().getPlayer().isOnGround()) {
-      yValue = -25;
-      }
-    }
-    float xValue = amp.analyze() * 10;
-    if (xValue < 1){
+    float xValue = getAmplitude();
+
+    if (xValue < .3) {
       xValue = 0;
+    } else {
+
+      if (getPitch() > 25) {
+        println(true);
+        if (g.getWorld().getPlayer().isOnGround()) {
+          yValue = -25;
+        }
+      }
+      
     }
     return new PVector(xValue, yValue);
-    
   }
-  
-  
-  
-  //public int getAmplitude(){
-    
-  //}
-  
-  //mic.getLevel() returns the amplitude of the sound
 }

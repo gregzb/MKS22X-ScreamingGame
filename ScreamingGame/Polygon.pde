@@ -31,14 +31,6 @@ public class Polygon {
     return total;
   }
   
-  public Ray[] getEdges() {
-    Ray[] rays = new Ray[points.length];
-    for(int i = 0; i < points.length; i++) {
-      rays[i] = new Ray(points[i], points[(i+1)%points.length]);
-    }
-    return rays;
-  }
-  
   public PVector[] getAxes() {
     PVector[] axes = new PVector[points.length];
     for (int idx = 0; idx < points.length; idx++) {
