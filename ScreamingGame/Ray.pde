@@ -14,21 +14,21 @@ public class Ray {
     this.dest = dest.copy();
   }
   
-  public ArrayList<RaycastInfo> raycast(Polygon p) {
-    ArrayList<RaycastInfo> infos = new ArrayList<RaycastInfo>();
-    Ray[] rays = p.getEdges();
+  //public ArrayList<RaycastInfo> raycast(Polygon p) {
+  //  ArrayList<RaycastInfo> infos = new ArrayList<RaycastInfo>();
+  //  Ray[] rays = p.getEdges();
     
-    for (Ray ray : rays) {
-      RaycastInfo raycastInfo = raycast(ray);
-      if (raycastInfo.hasHit()) {
-        infos.add(raycastInfo);
-      }
-    }
+  //  for (Ray ray : rays) {
+  //    RaycastInfo raycastInfo = raycast(ray);
+  //    if (raycastInfo.hasHit()) {
+  //      infos.add(raycastInfo);
+  //    }
+  //  }
     
-    return infos;
-  }
+  //  return infos;
+  //}
   
-  public RaycastInfo raycast(Ray r) {
+  //public RaycastInfo raycast(Ray r) {
     
-  }
+  //}
 }
