@@ -33,8 +33,8 @@ public class Player extends CollidableObject {
     topLeft = new PVector(bounds.getBotLeft().x, bounds.getTopRight().y);
 
     groundRays = new Ray[2];
-    groundRays[0] = new Ray(botLeft, new PVector(0, 1), 1);
-    groundRays[1] = new Ray(botRight, new PVector(0, 1), 1);
+    groundRays[0] = new Ray(PVector.add(botLeft, new PVector(.01, 0)), new PVector(0, 1), .5);
+    groundRays[1] = new Ray(PVector.add(botRight, new PVector(-.01, 0)), new PVector(0, 1), .5);
 
     //movementRays = new Ray[8];
     //movementRays[0] = new Ray(botRight, new PVector(0, 1), 1);
@@ -239,13 +239,13 @@ public class Player extends CollidableObject {
             if (i < 2) {
               //println(i + ": " + info.getT());
               //getVelocity().y *= info.getT();
-              xMult = min(xMult, info.getT());
+              xMult = min(xMult, info.getT() - 0.001);
               neitherDetect = false;
             } else if (i < 4){
               //println(i + ": " + info.getT());
               //getVelocity().x *= info.getT();
               if (info.getT() >= 0) {
-                yMult = min(yMult, info.getT());
+                yMult = min(yMult, info.getT() - .001);
               }
               neitherDetect = false;
             } else if (neitherDetect){
@@ -303,17 +303,17 @@ public class Player extends CollidableObject {
     //fill(0, 255, 255);
     //new Ray(velocityRay, getPosition()).display();
 
-    for (Ray r : movementRays) {
-      if (r != null) {
-        new Ray(r, getPosition()).display();
-      }
-    }
-
-    // println(isOnGround());
-
-    //for (Ray r : groundRays) {
-    //  new Ray(r, getPosition()).display();
+    //for (Ray r : movementRays) {
+    //  if (r != null) {
+    //    new Ray(r, getPosition()).display();
+    //  }
     //}
+
+    //// println(isOnGround());
+
+    for (Ray r : groundRays) {
+      new Ray(r, getPosition()).display();
+    }
   }
 
   public void moveRight() {

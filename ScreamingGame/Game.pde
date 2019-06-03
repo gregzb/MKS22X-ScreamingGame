@@ -32,7 +32,7 @@ public class Game {
     
     baseBounds = new Polygon(new PVector(0, 0), new PVector(width, 0), new PVector(width, height), new PVector(0, height));
     
-    Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
+    Platform platform = new Platform(this, new Polygon(new PVector(-75, -95), new PVector(75, -15), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
     world.addPlatform(platform);
     
     Platform platform2 = new Platform(this, new Polygon(new PVector(-250, -10), new PVector(250, -10), new PVector(250, 10), new PVector(-250, 10)), new PVector(100 + 225, height - 70), color(40, 90, 230));
