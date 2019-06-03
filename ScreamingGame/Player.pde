@@ -88,6 +88,8 @@ public class Player extends CollidableObject {
       if (!movingHorizontal) {
         getAcceleration().x = 0;
         getVelocity().x *= isOnGround() ? .7 : .96;
+      } else {
+        println("KEY DOWN");
       }
     } else {
       //setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
@@ -135,9 +137,16 @@ public class Player extends CollidableObject {
       
       for (int i = 0; i < movementRays.length; i++) {
         Ray r = movementRays[i];
-        ArrayList<RaycastInfo> rInfo = new Ray(r, getPosition().copy().add(getVelocity().copy().mult(0.1))).raycast(cObject.getTranslatedHitbox());
+        ArrayList<RaycastInfo> rInfoTemp = new Ray(r, getPosition().copy().add(getVelocity().copy().mult(0.1))).raycast(cObject.getTranslatedHitbox());
+        ArrayList<RaycastInfo> rInfo = new ArrayList<RaycastInfo>();
+        for (RaycastInfo inf : rInfoTemp) {
+          if (inf.hasHit() || (inf.getT() >= -.1 && inf.getT() <= 0 && inf.getTOther() >= 0 && inf.getTOther() < 1)) rInfo.add(inf);
+        }
         if (rInfo.size() > 1) {
           //println(rInfo);
+        }
+        if (i == 6 || i == 7) {
+          println("i is i: " + i + ", " + rInfo.size());
         }
         if (rInfo.size() > 0) {
           RaycastInfo info = rInfo.get(0);
@@ -148,7 +157,9 @@ public class Player extends CollidableObject {
           if (i < movementRays.length/2) {
             //println(i + ": " + info.getT());
             //getVelocity().y *= info.getT();
+            if (info.getT() >= 0) {
             yMult = min(yMult, info.getT());
+            }
           } else {
             //println(i + ": " + info.getT());
             //getVelocity().x *= info.getT();
@@ -197,7 +208,7 @@ public class Player extends CollidableObject {
     getHitbox().setFill(c);
     shape(getHitbox().getShape(), getPosition().x, getPosition().y);
 
-    //line(0, 0, 1000, 1000);
+    //line(0, 0000, 1000);
 
     stroke(0, 255, 0);
     strokeWeight(3);
@@ -232,7 +243,11 @@ public class Player extends CollidableObject {
       ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
       for (CollidableObject cObject : cObjects) {
         if (cObject == this) continue;
-        ArrayList<RaycastInfo> infos = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        ArrayList<RaycastInfo> infosTemp = new Ray(r, getPosition()).raycast(cObject.getTranslatedHitbox());
+        ArrayList<RaycastInfo> infos = new ArrayList<RaycastInfo>();
+        for (RaycastInfo inf : infosTemp) {
+          if (inf.hasHit()) infos.add(inf);
+        }
         if (infos.size() > 0) intersects = true;
         //IntersectInfo intersection = translatedHitbox.intersects(cObject.getTranslatedHitbox());
         //if (intersection.hasCollided()) {
