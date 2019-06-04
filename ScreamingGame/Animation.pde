@@ -11,6 +11,13 @@ public class Animation {
     this.secPerFrame = secPerFrame;
   }
   
+  public Animation(Animation a) {
+    frames = a.frames.clone();
+    secPerFrame = a.secPerFrame;
+    currentFrame = a.currentFrame;
+    timeCounter = a.timeCounter;
+  }
+  
   public void resizeAnim(float newScale) {
     for (int i = 0; i < frames.length; i++) {
       frames[i] = Helper.scaleImage(p, frames[i], newScale);

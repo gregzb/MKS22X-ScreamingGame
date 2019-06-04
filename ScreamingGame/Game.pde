@@ -6,7 +6,7 @@ public class Game {
   private Set<Character> prevKeysDown;
 
   private Polygon baseBounds;
-  
+
   private float lastSecsRunning;
 
   PImage[] backgrounds = new PImage[5];
@@ -17,23 +17,23 @@ public class Game {
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
 
     world = new World(0);
-    
+
     backgrounds = Helper.loadImages(p, "gfx/backgrounds/plx-", ".png", 1, 1, 5);
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
       backgrounds[i] = Helper.scaleImage(p, img, height/float(img.height));
     }
-    
+
     Map<String, Animation> animations = new HashMap<String, Animation>();
     animations.put("idle", new Animation(Helper.loadImages(p, "gfx/character/idle/frame_", "_delay-0.1s.png", 0, 2, 12), 0.1));
     animations.put("run", new Animation(Helper.loadImages(p, "gfx/character/run/frame_", "_delay-0.1s.png", 0, 1, 8), 0.1));
     animations.put("jumpUp", new Animation(Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 0, 2, 1), 0.1));
     animations.put("jumpDown", new Animation(Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 3, 2, 1), 0.1));
-    
+
     for (String animKey : animations.keySet()) {
       animations.get(animKey).resizeAnim(2);
     }
-    
+
     //Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), animations, true);
     //Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(21, 0), new PVector(21, 35), new PVector(0, 35)), new PVector(width/2, height/2), animations, true);
     Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(42, 0), new PVector(42, 70), new PVector(0, 70)), new PVector(width/2, height/2), animations, true);
@@ -45,7 +45,7 @@ public class Game {
   public void init() {
 
     frameRate(60);
-    
+
     lastSecsRunning = 0;
 
     int numPlatforms = 20;
@@ -57,7 +57,26 @@ public class Game {
       //Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
       Map<String, Animation> brick = new HashMap<String, Animation>();
       brick.put("defult", new Animation(Helper.loadImages(p, "gfx/tiles/brick.png", "", 0, 0, 1), 1));
-      Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), brick);
+      for (String animKey : brick.keySet()) {
+        brick.get(animKey).resizeAnim(2);
+      }
+      
+      Map<String, Animation> crate = new HashMap<String, Animation>();
+      crate.put("defult", new Animation(Helper.loadImages(p, "gfx/tiles/crate.png", "", 0, 0, 1), 1));
+      for (String animKey : crate.keySet()) {
+        crate.get(animKey).resizeAnim(2);
+      }
+      //Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), brick);
+      
+      Map<String, Animation> anim = crate;
+      
+      if (random(1) < 0.5) {
+        anim = brick;
+      } else {
+        anim = crate;
+      }
+      
+      Platform platform = new Platform(this, new Polygon(new PVector(0, 0), new PVector(160, 0), new PVector(160, 64), new PVector(0, 64)), new PVector(0 + 250 * i, height - 100), anim);
       world.addPlatform(platform);
     }
 
@@ -70,24 +89,24 @@ public class Game {
   public void runLoop() {
     float secsRunning = millis() / 1000.0;
     float dt = secsRunning-lastSecsRunning;
-    
+
     float pixelsPerSecond = 50;
-    
+
     //println(frameRate);
-    
+
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
       pushMatrix();
       float translation = (i/4.0) * secsRunning * pixelsPerSecond;
       translate(-translation, 0);
-      
+
       int baseNum = (int) (translation / img.width);
-      
+
       image(img, img.width*baseNum, 0);
       image(img, img.width*(baseNum+1), 0);
       popMatrix();
     }
-    
+
     pushMatrix();
     translate(-(secsRunning * pixelsPerSecond), 0);
 

@@ -101,8 +101,6 @@ public class Player extends CollidableObject {
       lastFacing = (int) (currAccel.x / abs(currAccel.x));
     }
 
-    println(lastFacing);
-
     pushMatrix();
     translate(getPosition().x-(currImage.width * ((lastFacing - 1) * 1/2.0)), getPosition().y);
     scale(lastFacing, 1); // You had it right!
