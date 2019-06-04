@@ -54,7 +54,10 @@ public class Game {
     //plat2 = new Platform(world, new Polygon(new PVector(-60, 20), new PVector(90, 40), new PVector(75, 60), new PVector(-75, 75)), new PVector(width/2, height/2), color(120, 200, 100));
 
     for (int i = 0; i < numPlatforms; i++) {
-      Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
+      //Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
+      Map<String, Animation> brick = new HashMap<String, Animation>();
+      brick.put("defult", new Animation(Helper.loadImages(p, "gfx/tiles/brick.png", "", 0, 0, 1), 1));
+      Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), brick);
       world.addPlatform(platform);
     }
 

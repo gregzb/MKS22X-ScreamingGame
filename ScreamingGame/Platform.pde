@@ -1,9 +1,11 @@
 public class Platform extends CollidableObject{
   private color c;
+  private Rect bounds;
   
-  public Platform(Game game, Polygon hitbox, PVector position, color c) {
-    super(game, hitbox, position, null);
+  public Platform(Game game, Polygon hitbox, PVector position, Map<String, Animation> animations) {
+    super(game, hitbox, position, animations);
     this.c = c;
+    this.bounds = hitbox.getBounds();
   }
   
   public void update(float dt) {
@@ -11,7 +13,8 @@ public class Platform extends CollidableObject{
   }
   
   public void display() {
-    getHitbox().setFill(c);
-    shape(getHitbox().getShape(), getPosition().x, getPosition().y);
+    PImage cImage = getCurrentImage();
+    //getHitbox().setFill(c);
+    //shape(getHitbox().getShape(), getPosition().x, getPosition().y);
   }
 }
