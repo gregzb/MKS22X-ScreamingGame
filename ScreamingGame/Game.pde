@@ -1,5 +1,7 @@
 public MousePointer mouse;
 
+public PFont pixelArtFont;
+
 public class Game {
 
   private AudioInputManager audioInManager;
@@ -13,6 +15,8 @@ public class Game {
   
   private String gameState;
   private String nextGameState;
+  
+  private float gameTimer = 0;
 
   PImage[] backgrounds = new PImage[5];
   
@@ -25,10 +29,13 @@ public class Game {
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
     
     mouse = new MousePointer(this);
+    //https://www.1001fonts.com/arcadeclassic-font.html
+    pixelArtFont = createFont("ARCADE_N.TTF", 128);
+    textFont(pixelArtFont);
 
 
     buttonImage = scaleImage(loadImage("gfx/button.png"), 6);
-    b = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), height/2 - (buttonImage.height/2)), buttonImage, "PLAY", "play");
+    b = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), height/2 - (buttonImage.height/2)), buttonImage, "PLAY", 45, "play");
 
 
 
@@ -121,23 +128,37 @@ public class Game {
   
   public void buttonPressed(String buttonName) {
     if (buttonName.equals("play")) {
+      gameTimer = 0;
       nextGameState = "game";
     }
   }
   
   public void menuLoop(float secsRunning, float dt) {
+    color col1 = color(102, 240, 242);
+    color col2 = color(92, 162, 232);
+    background(lerpColor(col1, col2, (sin(secsRunning) + 1) / 2));
     mouse.update(dt);
+    
+    textSize(64);
+    text("Urlando", width/2, 128);
+    
+    textSize(20);
+    text("Made by group AAAAAAAAHHH\n(Greg Zborovsky and Emma Choi)", width/2, height - 40);
+    
     b.update(dt);
     b.display();
   }
   
   public void gameLoop(float secsRunning, float dt) {
+    
+    gameTimer += dt;
+    
     float pixelsPerSecond = 50;
 
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
       pushMatrix();
-      float translation = (i/4.0) * secsRunning * pixelsPerSecond;
+      float translation = (i/4.0) * gameTimer * pixelsPerSecond;
       translate(-translation, 0);
 
       int baseNum = (int) (translation / img.width);
@@ -148,9 +169,9 @@ public class Game {
     }
 
     pushMatrix();
-    translate(-(secsRunning * pixelsPerSecond), 0);
+    translate(-(gameTimer * pixelsPerSecond), 0);
 
-    Polygon actualBounds = new Polygon(baseBounds, new PVector(secsRunning * pixelsPerSecond, 0));
+    Polygon actualBounds = new Polygon(baseBounds, new PVector(gameTimer * pixelsPerSecond, 0));
 
     boolean playerInBounds = actualBounds.intersects(world.getPlayer().getTranslatedHitbox()).hasCollided();
 
