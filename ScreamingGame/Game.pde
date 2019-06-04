@@ -71,7 +71,7 @@ public class Game {
 
     frameRate(60);
     
-    gameState = "menu";
+    gameState = "game";
     nextGameState = gameState;
 
     lastSecsRunning = 0;
