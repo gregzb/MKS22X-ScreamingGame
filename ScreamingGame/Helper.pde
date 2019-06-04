@@ -1,5 +1,3 @@
-import processing.core.*;
-
 public PImage[] loadImages(String preName, String postName, int startNum, int lPad, int numImages) {
   PImage[] temp = new PImage[numImages];
   for (int i = 0; i < numImages; i++) {
