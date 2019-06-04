@@ -22,14 +22,14 @@ public class Game {
   PImage[] backgrounds = new PImage[5];
 
   PImage buttonImage;
-  Button b;
+  Button[] difficulties;
 
   private int highScore;
   private int scoreLastFrame;
   private float lerpFactor;
 
   private boolean paused;
-  private float pixelsPerSecond = 100;
+  private float basePixelsPerSecond = 60;
 
   final boolean USING_KEYBOARD = true;
 
@@ -55,7 +55,10 @@ public class Game {
 
 
     buttonImage = scaleImage(loadImage("gfx/button.png"), 6);
-    b = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), 3 * height/5 - (buttonImage.height/2)), buttonImage, "PLAY", 45, "play");
+    difficulties = new Button[3];
+    difficulties[0] = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), height/2 - (buttonImage.height/2) - 25), buttonImage, "Easy", 42, "easy");
+    difficulties[1] = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), height/2 - (buttonImage.height/2) + 75), buttonImage, "Medium", 30, "medium");
+    difficulties[2] = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), height/2 - (buttonImage.height/2) + 175), buttonImage, "Hard", 42, "hard");
 
 
 
@@ -101,9 +104,9 @@ public class Game {
     nextGameState = gameState;
 
     lastSecsRunning = 0;
-    
+
     baseBounds = new Polygon(new PVector(0, 0), new PVector(width + 10, 0), new PVector(width + 10, height), new PVector(0, height));
-    
+
     wall = new Platform(this, new Polygon(new PVector(width, 0), new PVector(width + 100, 0), new PVector(width + 100, height), new PVector(width, height)), new PVector(0, 0), null);
     world.addPlatform(wall);
 
@@ -163,13 +166,25 @@ public class Game {
     //println(frameRate);
   }
 
+  public void beginGame() {
+    gameTimer = 0;
+    setGameState("game");
+    world.getPlayer().setPosition(new PVector(width/2, height/2));
+    world.getPlayer().setAcceleration(new PVector(0, 0));
+    world.getPlayer().setVelocity(new PVector(0, 0));
+    paused = false;
+  }
 
   public void buttonPressed(String buttonName) {
-    if (buttonName.equals("play")) {
-      gameTimer = 0;
-      nextGameState = "game";
-      world.getPlayer().setPosition(new PVector(width/2, height/2));
-      paused = false;
+    if (buttonName.equals("easy")) {
+      world.setDifficulty(0);
+      beginGame();
+    } else if (buttonName.equals("medium")) {
+      world.setDifficulty(1);
+      beginGame();
+    } else if (buttonName.equals("hard")) {
+      world.setDifficulty(2);
+      beginGame();
     }
   }
 
@@ -179,24 +194,31 @@ public class Game {
     color col2 = color(92, 162, 232);
     background(lerpColor(col1, col2, (sin(secsRunning) + 1) / 2));
     mouse.update(dt);
-
+    
+    fill(255);
+    
     textSize(64);
-    text("Urlando", width/2, 100);
-
+    text("Urlando", width/2, 80);
+    
+    fill(0);
     textSize(40);
-    text("High Score:", width/2, 200);
+    text("High Score:", width/2, 150);
 
     textSize(50);
-    text(leftPad(3, String.valueOf(getHighScore())), width/2, 250);
+    text(leftPad(3, String.valueOf(getHighScore())), width/2, 200);
 
     textSize(20);
     fill(210, 0, 0);
     text("Made by group AAAAAAAAHHH", width/2, height - 40);
-    fill(0);
+    //fill(0);
     text("Greg Zborovsky and Emma Choi", width/2, height - 15);
 
-    b.update(dt);
-    b.display();
+    //b.update(dt);
+    //b.display();
+    for (Button b : difficulties) {
+      b.update(dt);
+      b.display();
+    }
   }
 
   public void gameLoop(float secsRunning, float dt) {
@@ -213,6 +235,8 @@ public class Game {
       text("PAUSED", width/2, height/2);
       return;
     }
+    
+    float pixelsPerSecond = basePixelsPerSecond + (world.getDifficulty() * 50);
 
     gameTimer += dt;
 
@@ -232,7 +256,8 @@ public class Game {
     lerpFactor -= dt * 2.3;
 
     int highScore = getHighScore();
-    int score = (int) ((gameTimer * pixelsPerSecond) / 100);
+    println(((world.getDifficulty() + 1) / 12.0 + 1));
+    int score = (int) (((gameTimer * pixelsPerSecond) / 100) * ((world.getDifficulty() + 1) / 12.0 + 1));
 
     if (score != scoreLastFrame) {
       lerpFactor = 1.3;
@@ -254,9 +279,9 @@ public class Game {
     Polygon actualBounds = new Polygon(baseBounds, new PVector(gameTimer * pixelsPerSecond, 0));
 
     boolean playerInBounds = actualBounds.intersects(world.getPlayer().getTranslatedHitbox()).hasCollided();
-    
+
     wall.setPosition(new PVector(gameTimer * pixelsPerSecond, 0));
-    
+
     if (!playerInBounds) {
       System.out.println("PLAYER HAS DIED");
       setGameState("menu");
