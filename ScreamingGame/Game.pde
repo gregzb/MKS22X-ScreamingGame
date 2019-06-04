@@ -23,6 +23,21 @@ public class Game {
   PImage buttonImage;
   Button b;
   
+  private int highScore;
+  private int scoreLastFrame;
+  private float lerpFactor;
+  
+  private boolean paused;
+  float pixelsPerSecond = 60;
+  
+  public void setGameState(String gameState) {
+    nextGameState = gameState;
+  }
+  
+  public String getGameState() {
+    return gameState;
+  }
+  
   public Game(Set<Character> keysDown) {
     audioInManager = new AudioInputManager(this);
     this.keysDown = keysDown;
@@ -36,7 +51,7 @@ public class Game {
 
 
     buttonImage = scaleImage(loadImage("gfx/button.png"), 6);
-    b = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), height/2 - (buttonImage.height/2)), buttonImage, "PLAY", 45, "play");
+    b = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), 3 * height/5 - (buttonImage.height/2)), buttonImage, "PLAY", 45, "play");
 
 
 
@@ -66,12 +81,20 @@ public class Game {
 
     init();
   }
+  
+  public void setHighScore(int highScore) {
+    this.highScore = min(999, max(0, highScore));
+  }
+  
+  public int getHighScore() {
+    return highScore;
+  }
 
   public void init() {
 
     frameRate(60);
     
-    gameState = "game";
+    gameState = "menu";
     nextGameState = gameState;
 
     lastSecsRunning = 0;
@@ -130,14 +153,20 @@ public class Game {
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
     lastSecsRunning = secsRunning;
     gameState = nextGameState;
+    
+    //println(frameRate);
   }
+  
   
   public void buttonPressed(String buttonName) {
     if (buttonName.equals("play")) {
       gameTimer = 0;
       nextGameState = "game";
+      world.getPlayer().setPosition(new PVector(width/2, height/2));
+      paused = false;
     }
   }
+  
   
   public void menuLoop(float secsRunning, float dt) {
     color col1 = color(102, 240, 242);
@@ -146,10 +175,19 @@ public class Game {
     mouse.update(dt);
     
     textSize(64);
-    text("Urlando", width/2, 128);
+    text("Urlando", width/2, 100);
+    
+    textSize(40);
+    text("High Score:", width/2, 200);
+    
+    textSize(50);
+    text(leftPad(3, String.valueOf(getHighScore())), width/2, 250);
     
     textSize(20);
-    text("Made by group AAAAAAAAHHH\n(Greg Zborovsky and Emma Choi)", width/2, height - 40);
+    fill(210, 0, 0);
+    text("Made by group AAAAAAAAHHH", width/2, height - 40);
+    fill(0);
+    text("Greg Zborovsky and Emma Choi", width/2, height - 15);
     
     b.update(dt);
     b.display();
@@ -157,9 +195,20 @@ public class Game {
   
   public void gameLoop(float secsRunning, float dt) {
     
-    gameTimer += dt;
+    if (keyDown('p') && !prevKeyDown('p')) {
+      paused = !paused;
+    }
     
-    float pixelsPerSecond = 50;
+    if (paused) {
+      textSize(90);
+      color col1 = color(180, 20, 0);
+      color col2 = color(220, 0, 20);
+      fill(lerpColor(col1, col2, (sin(secsRunning * 10) + 1) / 2));
+      text("PAUSED", width/2, height/2);
+      return;
+    }
+    
+    gameTimer += dt;
 
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
@@ -173,6 +222,25 @@ public class Game {
       image(img, img.width*(baseNum+1), 0);
       popMatrix();
     }
+    
+    lerpFactor -= dt * 2.3;
+    
+    int highScore = getHighScore();
+    int score = (int) ((gameTimer * pixelsPerSecond) / 100);
+    
+    if (score != scoreLastFrame) {
+      lerpFactor = 1.3;
+    }
+    
+    scoreLastFrame = score;
+    setHighScore(max(score, highScore));
+    
+    color regColor = color(0);
+    color scoreUp = color(0, 160, 34);
+        
+    textSize(60);
+    fill(lerpColor(regColor, scoreUp, constrain(lerpFactor, 0, 1)));
+    text(leftPad(3, String.valueOf(score)), width/2, 75);
 
     pushMatrix();
     translate(-(gameTimer * pixelsPerSecond), 0);
@@ -183,7 +251,7 @@ public class Game {
 
     if (!playerInBounds) {
       System.out.println("PLAYER HAS DIED");
-      System.exit(0);
+      setGameState("menu");
     }
 
     //SET PLAYER ACCELERATION BASED ON SOUND

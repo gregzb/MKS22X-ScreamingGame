@@ -8,7 +8,7 @@ void setup() {
   size(600,600);
   noSmooth();
   
-  surface.setTitle("Screaming Game");
+  surface.setTitle("Urlando");
   noStroke();
   
   keysDown = new HashSet<Character>();
@@ -21,6 +21,11 @@ void draw() {
 
 void keyPressed() {
   keysDown.add(key);
+  
+  if (key == ESC) { //stop esc from escaping
+    key = 0;
+    g.setGameState("menu");
+  }
 }
 
 void keyReleased() {
