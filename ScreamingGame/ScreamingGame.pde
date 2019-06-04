@@ -6,6 +6,7 @@ Set<Character> keysDown;
 
 void setup() {
   size(600,600);
+  noSmooth();
   
   surface.setTitle("Screaming Game");
   noStroke();

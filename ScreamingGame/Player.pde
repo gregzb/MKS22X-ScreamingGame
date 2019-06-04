@@ -1,87 +1,64 @@
-public class Player extends CollidableObject{
+public class Player extends CollidableObject {
   private color c;
   private PVector unstuckForce = null;
   private boolean useKeys;
-  
+
   public Player(Game game, Polygon hitbox, PVector position, color c, boolean useKeys) {
     super(game, hitbox, position);
     this.c = c;
     this.useKeys = useKeys;
-    
+
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
   }
-  
+
   public void update() {
-    
+
     if (isOnGround()) {
       getVelocity().y = 0;
     }
-    
-    
-    
+
+
     if (useKeys) {
-    
-    if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
-      PVector currentAccel = getAcceleration();
-      setAcceleration(new PVector(currentAccel.x, -25));
-    } else {
-      setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
-    }
-    
-    
-    
-    
-    
-    
-    
-    //PVector newVel = getVelocity().copy();
-    
-    boolean movingHorizontal = false;
-    
-    if (getGame().keyDown('a') || getGame().keyDown('A')) {
-      getAcceleration().x = -.2;
-      movingHorizontal = true;
-    }
-    
-    if (getGame().keyDown('d') || getGame().keyDown('D')) {
-      getAcceleration().x = .2;
-      movingHorizontal = true;
-    }
-    
-    if (!movingHorizontal) {
-      getAcceleration().x = 0;
-      getVelocity().x *= isOnGround() ? .7 : .96;
-    }
-    
+
+      if (getGame().keyDown(' ') && !getGame().prevKeyDown(' ') && isOnGround()) {
+        PVector currentAccel = getAcceleration();
+        setAcceleration(new PVector(currentAccel.x, -25));
+      } else {
+        setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
+      }
+
+
+      boolean movingHorizontal = false;
+
+      if (getGame().keyDown('a') || getGame().keyDown('A')) {
+        getAcceleration().x = -.2;
+        movingHorizontal = true;
+      }
+
+      if (getGame().keyDown('d') || getGame().keyDown('D')) {
+        getAcceleration().x = .2;
+        movingHorizontal = true;
+      }
+
+      if (!movingHorizontal) {
+        getAcceleration().x = 0;
+        getVelocity().x *= isOnGround() ? .7 : .96;
+      }
     } else {
       //setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
       getVelocity().x *= isOnGround() ? .7 : .96;
     }
-    
-    //newVel.x = constrain(newVel.x, -3, 3);
-    //setVelocity(newVel);
-    
 
-    
-    
-    
-    
-    
-    
+
     applyAcceleration();
-    
     applyVelocity();
-    
-    
-    
-    
-  
-    PVector newVel = getVelocity().copy();
+
+
     Polygon translatedHitbox = getTranslatedHitbox();
-    
+
     unstuckForce = null;
-        
+
     ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
     for (CollidableObject cObject : cObjects) {
       if (cObject == this) continue;
@@ -90,35 +67,19 @@ public class Player extends CollidableObject{
         unstuckForce = intersection.getReverseForce();
       }
     }
-        
+
     PVector pos = getPosition();
     if (unstuckForce != null) {
       setPosition(pos.copy().add(unstuckForce));
     }
-    
-    
-    
-    
-    
-    
-    //System.out.println("Pos: " + getPosition() + ", Vel: " + getVelocity() + ", Accel: " + getAcceleration());
   }
-  
+
   public void display() {
     getHitbox().setFill(c);
     shape(getHitbox().getShape(), getPosition().x, getPosition().y);
   }
-  
-  public void moveRight() {
-    
-  }
-  
-  public void jump() {
-    
-  }
-  
+
   public boolean isOnGround() {
     return unstuckForce != null && unstuckForce.y < 0;
   }
-  
 }
