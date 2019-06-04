@@ -85,8 +85,13 @@ public class Game {
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
       pushMatrix();
-      translate(-(i/4.0) * secsRunning * pixelsPerSecond, 0);
-      image(img, 0, 0);
+      float translation = (i/4.0) * secsRunning * pixelsPerSecond;
+      translate(-translation, 0);
+      
+      int baseNum = (int) (translation / img.width);
+      
+      image(img, img.width*baseNum, 0);
+      image(img, img.width*(baseNum+1), 0);
       popMatrix();
     }
     
