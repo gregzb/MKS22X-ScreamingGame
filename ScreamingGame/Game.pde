@@ -24,17 +24,14 @@ public class Game {
       backgrounds[i] = Helper.scaleImage(p, img, height/float(img.height));
     }
     
-    Map<String, PImage[]> animations = new HashMap<String, PImage[]>();
-    animations.put("idle", Helper.loadImages(p, "gfx/character/idle/frame_", "_delay-0.1s.png", 0, 2, 12));
-    animations.put("run", Helper.loadImages(p, "gfx/character/run/frame_", "_delay-0.1s.png", 0, 1, 8));
-    animations.put("jumpUp", Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 0, 2, 1));
-    animations.put("jumpDown", Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 3, 2, 1));
+    Map<String, Animation> animations = new HashMap<String, Animation>();
+    animations.put("idle", new Animation(Helper.loadImages(p, "gfx/character/idle/frame_", "_delay-0.1s.png", 0, 2, 12), 0.1));
+    animations.put("run", new Animation(Helper.loadImages(p, "gfx/character/run/frame_", "_delay-0.1s.png", 0, 1, 8), 0.1));
+    animations.put("jumpUp", new Animation(Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 0, 2, 1), 0.1));
+    animations.put("jumpDown", new Animation(Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 3, 2, 1), 0.1));
     
     for (String animKey : animations.keySet()) {
-      PImage[] temp = animations.get(animKey);
-      for (int i = 0; i < temp.length; i++) {
-        temp[i] = Helper.scaleImage(p, temp[i], 2);
-      }
+      animations.get(animKey).resizeAnim(2);
     }
     
     //Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), animations, true);
@@ -69,7 +66,7 @@ public class Game {
 
   public void runLoop() {
     float secsRunning = millis() / 1000.0;
-    float dt = lastSecsRunning-secsRunning;
+    float dt = secsRunning-lastSecsRunning;
     
     float pixelsPerSecond = 50;
     
@@ -111,7 +108,7 @@ public class Game {
 
     ArrayList<CollidableObject> cObjects = world.getCollidableObjects();
     for (CollidableObject cObject : cObjects) {
-      cObject.update();
+      cObject.update(dt);
     }
     for (CollidableObject cObject : cObjects) {
       cObject.display();

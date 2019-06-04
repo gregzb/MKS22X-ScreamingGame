@@ -6,17 +6,14 @@ public abstract class CollidableObject {
   private PVector acceleration;
   private Game game;
 
-  private Map<String, PImage[]> animations;
+  private Map<String, Animation> animations;
   private String playingAnimation;
-  private int currentFrame;
 
-  private PImage currentImage;
-
-  public CollidableObject(Game game, Polygon hitbox, PVector position, Map<String, PImage[]> animations) {
+  public CollidableObject(Game game, Polygon hitbox, PVector position, Map<String, Animation> animations) {
     this(game, hitbox, position, new PVector(0, 0), new PVector(0, 0), animations);
   }
 
-  public CollidableObject(Game game, Polygon hitbox, PVector position, PVector velocity, PVector acceleration, Map<String, PImage[]> animations) {
+  public CollidableObject(Game game, Polygon hitbox, PVector position, PVector velocity, PVector acceleration, Map<String, Animation> animations) {
     this.game = game;
     this.hitbox = hitbox;
     this.position = position;
@@ -27,28 +24,24 @@ public abstract class CollidableObject {
     if (this.animations == null || !this.animations.entrySet().iterator().hasNext()) {
 
       this.playingAnimation = null;
-      this.currentFrame = -1;
-      this.currentImage = null;
     } else {
       this.playingAnimation = this.animations.entrySet().iterator().next().getKey();
-      this.currentFrame = -1;
-      updateAnimation();
+      updateAnimation(0);
     }
   }
 
-  public void updateAnimation() {
+  public void updateAnimation(float dt) {
     if (playingAnimation != null) {
-      PImage[] frames = animations.get(playingAnimation);
-      this.currentFrame++;
-      this.currentFrame %= frames.length;
-
-      this.currentImage = frames[this.currentFrame];
+      animations.get(playingAnimation).update(dt);
     }
   }
 
   public void playAnimation(String playingAnimation) {
     this.playingAnimation = playingAnimation;
-    this.currentFrame = 0;
+  }
+  
+  public void restartAnimation(String playingAnimation) {
+    animations.get(playingAnimation).restart();
   }
 
   public String getPlayingAnimation() {
@@ -56,7 +49,7 @@ public abstract class CollidableObject {
   }
 
   public PImage getCurrentImage() {
-    return currentImage;
+    return animations.get(playingAnimation).getCurrentImage();
   }
 
   public void setMaxVelocity(PVector maxVelocity) {
@@ -118,6 +111,6 @@ public abstract class CollidableObject {
     return new Polygon(getHitbox(), getPosition());
   }
 
-  public abstract void update();
+  public abstract void update(float dt);
   public abstract void display();
 }

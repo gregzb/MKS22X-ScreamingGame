@@ -2,17 +2,19 @@ public class Player extends CollidableObject {
   private PVector unstuckForce = null;
   private boolean useKeys;
 
-  public Player(Game game, Polygon hitbox, PVector position, Map<String, PImage[]> animations, boolean useKeys) {
+  private int lastFacing = 1;
+
+  public Player(Game game, Polygon hitbox, PVector position, Map<String, Animation> animations, boolean useKeys) {
     super(game, hitbox, position, animations);
     this.useKeys = useKeys;
 
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
-    
+
     playAnimation("idle");
   }
 
-  public void update() {
+  public void update(float dt) {
 
     if (isOnGround()) {
       getVelocity().y = 0;
@@ -48,6 +50,20 @@ public class Player extends CollidableObject {
     } else {
       getVelocity().x *= isOnGround() ? .7 : .96;
     }
+    
+    if (abs(getAcceleration().x) > 0.02) {
+      playAnimation("run");
+    } else {
+      playAnimation("idle");
+    }
+    
+    if (!isOnGround()) {
+      if (getVelocity().y < 0) {
+        playAnimation("jumpUp");
+      } else {
+        playAnimation("jumpDown");
+      }
+    }
 
 
     applyAcceleration();
@@ -71,13 +87,27 @@ public class Player extends CollidableObject {
     if (unstuckForce != null) {
       setPosition(pos.copy().add(unstuckForce));
     }
+
+    updateAnimation(dt);
   }
 
   public void display() {
-    updateAnimation();
     //getHitbox().setFill(c);
     //shape(getHitbox().getShape(), getPosition().x, getPosition().y);
-    image(getCurrentImage(), getPosition().x, getPosition().y);
+    PImage currImage = getCurrentImage();
+    PVector currAccel = getAcceleration();
+
+    if (currAccel.x != 0) {
+      lastFacing = (int) (currAccel.x / abs(currAccel.x));
+    }
+
+    println(lastFacing);
+
+    pushMatrix();
+    translate(getPosition().x-(currImage.width * ((lastFacing - 1) * 1/2.0)), getPosition().y);
+    scale(lastFacing, 1); // You had it right!
+    image(currImage, 0, 0);
+    popMatrix();
   }
 
   public boolean isOnGround() {

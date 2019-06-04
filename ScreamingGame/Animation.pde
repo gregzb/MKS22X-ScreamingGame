@@ -1,16 +1,20 @@
 public class Animation {
   
-  private String name;
   private PImage[] frames;
   private float secPerFrame;
   
-  private float currentFrame = 0;
+  private int currentFrame = 0;
   private float timeCounter = 0;
   
-  public Animation(String name, PImage[] frames, float secPerFrame) {
-    this.name = name;
+  public Animation(PImage[] frames, float secPerFrame) {
     this.frames = frames;
     this.secPerFrame = secPerFrame;
+  }
+  
+  public void resizeAnim(float newScale) {
+    for (int i = 0; i < frames.length; i++) {
+      frames[i] = Helper.scaleImage(p, frames[i], newScale);
+    }
   }
   
   public void update(float dt) {
@@ -30,7 +34,7 @@ public class Animation {
     return secPerFrame;
   }
   
-  public String getName() {
-    return name;
+  public void restart() {
+    currentFrame = 0;
   }
 }
