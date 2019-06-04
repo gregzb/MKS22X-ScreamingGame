@@ -15,6 +15,8 @@ public class Platform extends CollidableObject{
   public void display() {
     PImage cImage = getCurrentImage();
     
+    if (cImage == null) return;
+    
     float boxWidth = bounds.getTopRight().x-bounds.getBotLeft().x;
     float boxHeight = bounds.getBotLeft().y-bounds.getTopRight().y;
     

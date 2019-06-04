@@ -72,14 +72,16 @@ public class Player extends CollidableObject {
 
     Polygon translatedHitbox = getTranslatedHitbox();
 
-    unstuckForce = null;
+    unstuckForce = new PVector(0, 0);
 
     ArrayList<Platform> cObjects = getGame().getWorld().getPlatforms();
     for (CollidableObject cObject : cObjects) {
       if (cObject == this) continue;
       IntersectInfo intersection = translatedHitbox.intersects(cObject.getTranslatedHitbox());
       if (intersection.hasCollided()) {
-        unstuckForce = intersection.getReverseForce();
+        PVector temp = intersection.getReverseForce();
+        if (abs(temp.x) > abs(unstuckForce.x)) unstuckForce.x = temp.x;
+        if (abs(temp.y) > abs(unstuckForce.y)) unstuckForce.y = temp.y;
       }
     }
 

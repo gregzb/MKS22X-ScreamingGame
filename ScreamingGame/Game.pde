@@ -10,6 +10,7 @@ public class Game {
   private Set<Character> prevKeysDown;
 
   private Polygon baseBounds;
+  private Platform wall;
 
   private float lastSecsRunning;
 
@@ -28,7 +29,7 @@ public class Game {
   private float lerpFactor;
 
   private boolean paused;
-  private float pixelsPerSecond = 60;
+  private float pixelsPerSecond = 100;
 
   final boolean USING_KEYBOARD = true;
 
@@ -52,9 +53,9 @@ public class Game {
     textFont(pixelArtFont);
 
 
+
     buttonImage = scaleImage(loadImage("gfx/button.png"), 6);
     b = new Button(this, new Polygon(new PVector(0, 0), new PVector(buttonImage.width, 0), new PVector(buttonImage.width, buttonImage.height), new PVector(0, buttonImage.height)), new PVector(width/2 - (buttonImage.width/2), 3 * height/5 - (buttonImage.height/2)), buttonImage, "PLAY", 45, "play");
-
 
 
 
@@ -100,6 +101,11 @@ public class Game {
     nextGameState = gameState;
 
     lastSecsRunning = 0;
+    
+    baseBounds = new Polygon(new PVector(0, 0), new PVector(width + 10, 0), new PVector(width + 10, height), new PVector(0, height));
+    
+    wall = new Platform(this, new Polygon(new PVector(width, 0), new PVector(width + 100, 0), new PVector(width + 100, height), new PVector(width, height)), new PVector(0, 0), null);
+    world.addPlatform(wall);
 
     int numPlatforms = 20;
 
@@ -133,8 +139,6 @@ public class Game {
       Platform platform = new Platform(this, new Polygon(new PVector(r, -32), new PVector(l, -32), new PVector(l, 32), new PVector(r, 32)), new PVector(l - r + 225 * i, height - 100), anim);
       world.addPlatform(platform);
     }
-
-    baseBounds = new Polygon(new PVector(0, 0), new PVector(width, 0), new PVector(width, height), new PVector(0, height));
 
     //Platform platform = new Platform(world, new Polygon(new PVector(-100, -25), new PVector(100, -25), new PVector(100, 25), new PVector(-100, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
 
@@ -250,7 +254,9 @@ public class Game {
     Polygon actualBounds = new Polygon(baseBounds, new PVector(gameTimer * pixelsPerSecond, 0));
 
     boolean playerInBounds = actualBounds.intersects(world.getPlayer().getTranslatedHitbox()).hasCollided();
-
+    
+    wall.setPosition(new PVector(gameTimer * pixelsPerSecond, 0));
+    
     if (!playerInBounds) {
       System.out.println("PLAYER HAS DIED");
       setGameState("menu");

@@ -39,7 +39,7 @@ public abstract class CollidableObject {
   public void playAnimation(String playingAnimation) {
     this.playingAnimation = playingAnimation;
   }
-  
+
   public void restartAnimation(String playingAnimation) {
     animations.get(playingAnimation).restart();
   }
@@ -49,7 +49,10 @@ public abstract class CollidableObject {
   }
 
   public PImage getCurrentImage() {
-    return animations.get(playingAnimation).getCurrentImage();
+    if (animations != null && animations.get(playingAnimation) != null) {
+      return animations.get(playingAnimation).getCurrentImage();
+    }
+    return null;
   }
 
   public void setMaxVelocity(PVector maxVelocity) {
