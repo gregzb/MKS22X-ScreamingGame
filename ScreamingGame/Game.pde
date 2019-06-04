@@ -26,13 +26,15 @@ public class Game {
     //plat2 = new Platform(world, new Polygon(new PVector(-60, 20), new PVector(90, 40), new PVector(75, 60), new PVector(-75, 75)), new PVector(width/2, height/2), color(120, 200, 100));
     
     for (int i = 0; i < numPlatforms; i++) {
-      Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
+      int l = ((int)(Math.random() * 3)) * 32 + 32;
+      int r = -(((int)(Math.random() * 3)) * 32 + 32);
+      Platform platform = new Platform(this, new Polygon(new PVector(r, -25), new PVector(l, -25), new PVector(l, 25), new PVector(r, 25)), new PVector(l - r + 225 * i, height - 100), color(40, 90, 230));
       world.addPlatform(platform);
     }
     
     baseBounds = new Polygon(new PVector(0, 0), new PVector(width, 0), new PVector(width, height), new PVector(0, height));
     
-    //Platform platform = new Platform(world, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
+    //Platform platform = new Platform(world, new Polygon(new PVector(-100, -25), new PVector(100, -25), new PVector(100, 25), new PVector(-100, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
     //world.addPlatform(platform);
   }
   
