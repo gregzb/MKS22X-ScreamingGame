@@ -4,6 +4,8 @@ import java.util.*;
 Game g;
 Set<Character> keysDown;
 
+public PApplet p = this;
+
 void setup() {
   size(600,600);
   noSmooth();

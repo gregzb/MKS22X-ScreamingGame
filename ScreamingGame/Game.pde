@@ -18,17 +18,24 @@ public class Game {
 
     world = new World(0);
     
-    backgrounds = loadImages("gfx/backgrounds/plx-", ".png", 1, 1, 5);
+    backgrounds = Helper.loadImages(p, "gfx/backgrounds/plx-", ".png", 1, 1, 5);
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
-      backgrounds[i] = scaleImage(img, height/float(img.height));
+      backgrounds[i] = Helper.scaleImage(p, img, height/float(img.height));
     }
     
     Map<String, PImage[]> animations = new HashMap<String, PImage[]>();
-    animations.put("idle", loadImages("gfx/character/idle/frame_", "_delay-0.1s.png", 0, 2, 12));
-    animations.put("run", loadImages("gfx/character/run/frame_", "_delay-0.1s.png", 0, 1, 8));
-    animations.put("jumpUp", loadImages("gfx/character/jump/jump-", ".png", 0, 2, 1));
-    animations.put("jumpDown", loadImages("gfx/character/jump/jump-", ".png", 3, 2, 1));
+    animations.put("idle", Helper.loadImages(p, "gfx/character/idle/frame_", "_delay-0.1s.png", 0, 2, 12));
+    animations.put("run", Helper.loadImages(p, "gfx/character/run/frame_", "_delay-0.1s.png", 0, 1, 8));
+    animations.put("jumpUp", Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 0, 2, 1));
+    animations.put("jumpDown", Helper.loadImages(p, "gfx/character/jump/jump-", ".png", 3, 2, 1));
+    
+    for (String animKey : animations.keySet()) {
+      PImage[] temp = animations.get(animKey);
+      for (int i = 0; i < temp.length; i++) {
+        temp[i] = Helper.scaleImage(p, temp[i], 2);
+      }
+    }
     
     //Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), animations, true);
     //Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(21, 0), new PVector(21, 35), new PVector(0, 35)), new PVector(width/2, height/2), animations, true);
@@ -36,38 +43,6 @@ public class Game {
     world.setPlayer(p);
 
     init();
-  }
-
-  PImage[] loadImages(String preName, String postName, int startNum, int lPad, int numImages) {
-    PImage[] temp = new PImage[numImages];
-    for (int i = 0; i < numImages; i++) {
-      String lPadStr = "";
-      for (int j = 0; j < lPad; j++) {
-        lPadStr += "0";
-      }
-      String lPaddedNum = lPadStr.concat(String.valueOf(i + startNum));
-      lPaddedNum = lPaddedNum.substring(lPaddedNum.length() - lPadStr.length());
-
-      temp[i] = loadImage(preName + lPaddedNum + postName);
-    }
-    return temp;
-  }
-  
-  //Taken from https://stackoverflow.com/questions/10119037/image-interpolation-nearest-neighbor-processing
-  PImage scaleImage(PImage original, float newScale) {
-    int scaledWidth = (int)(newScale*original.width);
-    int scaledHeight = (int)(newScale*original.height);
-    PImage out = createImage(scaledWidth, scaledHeight, RGB);
-    original.loadPixels();
-    out.loadPixels();
-    for (int i = 0; i < scaledHeight; i++) {
-      for (int j = 0; j < scaledWidth; j++) {
-        int y = Math.min( round(i / newScale), original.height - 1 ) * original.width;
-        int x = Math.min( round(j / newScale), original.width - 1 );
-        out.pixels[(int)((scaledWidth * i) + j)] = original.pixels[(y + x)];
-      }
-    }
-    return out;
   }
 
   public void init() {
