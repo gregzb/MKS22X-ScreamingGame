@@ -36,7 +36,7 @@ public class Game {
 
     //Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), animations, true);
     //Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(21, 0), new PVector(21, 35), new PVector(0, 35)), new PVector(width/2, height/2), animations, true);
-    Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(42, 0), new PVector(42, 70), new PVector(0, 70)), new PVector(width/2, height/2), animations, true);
+    Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(42, 0), new PVector(42, 70), new PVector(0, 70)), new PVector(width/2, height/2), animations, false);
     world.setPlayer(p);
 
     init();
@@ -125,7 +125,7 @@ public class Game {
       println("Vol: " + audioInManager.getAmplitude() + ", Pitch: " + audioInManager.getPitch());
     }
 
-    //world.getPlayer().setAcceleration(audioInManager.getAcceleration());
+    world.getPlayer().setAcceleration(audioInManager.getAcceleration());
     //println(world.getPlayer().getPosition());
 
     ArrayList<CollidableObject> cObjects = world.getCollidableObjects();
