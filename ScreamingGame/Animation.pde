@@ -20,7 +20,7 @@ public class Animation {
   
   public void resizeAnim(float newScale) {
     for (int i = 0; i < frames.length; i++) {
-      frames[i] = Helper.scaleImage(p, frames[i], newScale);
+      frames[i] = scaleImage(frames[i], newScale);
     }
   }
   
