@@ -1,15 +1,15 @@
 public class Player extends CollidableObject {
-  private color c;
   private PVector unstuckForce = null;
   private boolean useKeys;
 
-  public Player(Game game, Polygon hitbox, PVector position, color c, boolean useKeys) {
-    super(game, hitbox, position);
-    this.c = c;
+  public Player(Game game, Polygon hitbox, PVector position, Map<String, PImage[]> animations, boolean useKeys) {
+    super(game, hitbox, position, animations);
     this.useKeys = useKeys;
 
     setMaxVelocity(new PVector(3, 9));
     setAcceleration(new PVector(0, getGame().getWorld().getGravity().y));
+    
+    playAnimation("idle");
   }
 
   public void update() {
@@ -46,7 +46,6 @@ public class Player extends CollidableObject {
         getVelocity().x *= isOnGround() ? .7 : .96;
       }
     } else {
-      //setAcceleration(new PVector(getAcceleration().x, getGame().getWorld().getGravity().y));
       getVelocity().x *= isOnGround() ? .7 : .96;
     }
 
@@ -75,8 +74,10 @@ public class Player extends CollidableObject {
   }
 
   public void display() {
-    getHitbox().setFill(c);
-    shape(getHitbox().getShape(), getPosition().x, getPosition().y);
+    updateAnimation();
+    //getHitbox().setFill(c);
+    //shape(getHitbox().getShape(), getPosition().x, getPosition().y);
+    image(getCurrentImage(), getPosition().x, getPosition().y);
   }
 
   public boolean isOnGround() {

@@ -6,6 +6,8 @@ public class Game {
   private Set<Character> prevKeysDown;
 
   private Polygon baseBounds;
+  
+  private float lastSecsRunning;
 
   PImage[] backgrounds = new PImage[5];
 
@@ -15,25 +17,43 @@ public class Game {
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
 
     world = new World(0);
-    Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), color(255, 0, 127), true);
+    
+    backgrounds = loadImages("gfx/backgrounds/plx-", ".png", 1, 1, 5);
+    for (int i = 0; i < backgrounds.length; i++) {
+      PImage img = backgrounds[i];
+      backgrounds[i] = scaleImage(img, height/float(img.height));
+    }
+    
+    Map<String, PImage[]> animations = new HashMap<String, PImage[]>();
+    animations.put("idle", loadImages("gfx/character/idle/frame_", "_delay-0.1s.png", 0, 2, 12));
+    animations.put("run", loadImages("gfx/character/run/frame_", "_delay-0.1s.png", 0, 1, 8));
+    animations.put("jumpUp", loadImages("gfx/character/jump/jump-", ".png", 0, 2, 1));
+    animations.put("jumpDown", loadImages("gfx/character/jump/jump-", ".png", 3, 2, 1));
+    
+    //Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), animations, true);
+    //Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(21, 0), new PVector(21, 35), new PVector(0, 35)), new PVector(width/2, height/2), animations, true);
+    Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(42, 0), new PVector(42, 70), new PVector(0, 70)), new PVector(width/2, height/2), animations, true);
     world.setPlayer(p);
 
     init();
   }
 
-  void loadImages(String preName, String postName, int startNum, int lPad, int numImages, PImage[] outputArray) {
+  PImage[] loadImages(String preName, String postName, int startNum, int lPad, int numImages) {
+    PImage[] temp = new PImage[numImages];
     for (int i = 0; i < numImages; i++) {
       String lPadStr = "";
       for (int j = 0; j < lPad; j++) {
         lPadStr += "0";
       }
       String lPaddedNum = lPadStr.concat(String.valueOf(i + startNum));
-      lPaddedNum = lPaddedNum.substring(lPaddedNum.length() - lPadStr.length() - 1);
+      lPaddedNum = lPaddedNum.substring(lPaddedNum.length() - lPadStr.length());
 
-      outputArray[i] = loadImage(preName + lPaddedNum + postName);
+      temp[i] = loadImage(preName + lPaddedNum + postName);
     }
+    return temp;
   }
-
+  
+  //Taken from https://stackoverflow.com/questions/10119037/image-interpolation-nearest-neighbor-processing
   PImage scaleImage(PImage original, float newScale) {
     int scaledWidth = (int)(newScale*original.width);
     int scaledHeight = (int)(newScale*original.height);
@@ -53,12 +73,8 @@ public class Game {
   public void init() {
 
     frameRate(60);
-
-    loadImages("gfx/backgrounds/plx-", ".png", 1, 0, 5, backgrounds);
-    for (int i = 0; i < backgrounds.length; i++) {
-      PImage img = backgrounds[i];
-      backgrounds[i] = scaleImage(img, height/float(img.height));
-    }
+    
+    lastSecsRunning = 0;
 
     int numPlatforms = 20;
 
@@ -77,10 +93,12 @@ public class Game {
   }
 
   public void runLoop() {
-    background(world.getBackgroundColor());
-
     float secsRunning = millis() / 1000.0;
+    float dt = lastSecsRunning-secsRunning;
+    
     float pixelsPerSecond = 50;
+    
+    //println(frameRate);
     
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
@@ -133,6 +151,7 @@ public class Game {
     popMatrix();
 
     this.prevKeysDown = new HashSet<Character>(this.keysDown);
+    lastSecsRunning = secsRunning;
   }
 
   public World getWorld() {
