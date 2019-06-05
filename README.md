@@ -42,6 +42,28 @@
 ### 5/31/2019
   * Another method to take the top frequency and its surrounding neighbors (to eliminate the issue with overloading noise), 
     finally seemed to have reached a working method -Emma
+  * Thought more about how raycasting could be used for platformer collision detection -Greg
+
+### 6/1/2019
+  * Continued brainstorming how raycasting could be used for platformer collision detection, potentially found a solution -Greg
+  
+### 6/2/2019
+  * Made effort to use raycasting, but overall idea did not work and cannot be used for this project -Greg
+  
+### 6/3/2019
+  * Removed raycasting related classes -Greg
+  * Modified pitch detection to use "average of indices" with values as frequency -Greg
+  * Added new textures/graphics, image loader, and nearest neighbor image scaler -Greg
+  * Added infinite scrolling capabilities to the background -Greg
+  * Added basic parts of animation system, especially for the character -Greg
+
+### 6/4/2019
+  * Finished animation system for this project -Greg
+  * Assigned textures to platforms -Greg
+  * Refactoring, Helper tab, etc -Greg
+  * Added menu, new game title, and font -Greg
+  * Pause capability added -Greg
+  * Three difficulty settings on the main menu alter speed and scoring of the game -Greg
   
 # Authors
   * Greg Zborovsky
