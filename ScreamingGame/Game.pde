@@ -29,9 +29,11 @@ public class Game {
   private float lerpFactor;
 
   private boolean paused;
-  private float basePixelsPerSecond = 60;
+  private float basePixelsPerSecond = 50;
 
-  final boolean USING_KEYBOARD = true;
+  final boolean USING_KEYBOARD = false;
+
+  Deque<Platform> platformDeque;
 
   public void setGameState(String gameState) {
     nextGameState = gameState;
@@ -64,6 +66,8 @@ public class Game {
 
     world = new World(0);
 
+    platformDeque = new ArrayDeque<Platform>();
+
     backgrounds = loadImages("gfx/backgrounds/plx-", ".png", 1, 1, 5);
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
@@ -82,7 +86,7 @@ public class Game {
 
     //Player p = new Player(this, new Polygon(new PVector(-10, -15), new PVector(10, -15), new PVector(10, 15), new PVector(-10, 15)), new PVector(width/2, height/2), animations, true);
     //Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(21, 0), new PVector(21, 35), new PVector(0, 35)), new PVector(width/2, height/2), animations, true);
-    Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(42, 0), new PVector(42, 70), new PVector(0, 70)), new PVector(width/2, height/2), animations, USING_KEYBOARD);
+    Player p = new Player(this, new Polygon(new PVector(0, 0), new PVector(42, 0), new PVector(42, 70), new PVector(0, 70)), new PVector(width/2, 64), animations, USING_KEYBOARD);
     world.setPlayer(p);
 
     init();
@@ -95,6 +99,9 @@ public class Game {
   public int getHighScore() {
     return highScore;
   }
+  
+  PImage[] brickImage;
+  PImage[] crateImage;
 
   public void init() {
 
@@ -105,48 +112,30 @@ public class Game {
 
     lastSecsRunning = 0;
 
-    baseBounds = new Polygon(new PVector(0, 0), new PVector(width + 10, 0), new PVector(width + 10, height), new PVector(0, height));
+    baseBounds = new Polygon(new PVector(0, -100), new PVector(width + 10, -100), new PVector(width + 10, height), new PVector(0, height));
 
-    wall = new Platform(this, new Polygon(new PVector(width, 0), new PVector(width + 100, 0), new PVector(width + 100, height), new PVector(width, height)), new PVector(0, 0), null);
+    wall = new Platform(this, new Polygon(new PVector(width, -100), new PVector(width + 100, -100), new PVector(width + 100, height), new PVector(width, height)), new PVector(0, 0), null);
     world.addPlatform(wall);
 
-    int numPlatforms = 20;
-
-    //plat1 = new Platform(world, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-50, 25)), new PVector(width/2, height/2), color(10, 22, 100));
-    //plat2 = new Platform(world, new Polygon(new PVector(-60, 20), new PVector(90, 40), new PVector(75, 60), new PVector(-75, 75)), new PVector(width/2, height/2), color(120, 200, 100));
-
-    PImage[] brickImage = loadImages("gfx/tiles/brick.png", "", 0, 0, 1);
+    brickImage = loadImages("gfx/tiles/brick.png", "", 0, 0, 1);
     brickImage[0] = scaleImage(brickImage[0], 2);
 
-    PImage[] crateImage = loadImages("gfx/tiles/crate.png", "", 0, 0, 1);
+    crateImage = loadImages("gfx/tiles/crate.png", "", 0, 0, 1);
     crateImage[0] = scaleImage(crateImage[0], 2);
+  }
 
-    for (int i = 0; i < numPlatforms; i++) {
+  public Map<String, Animation> genRandomAnim() {
+    Map<String, Animation> brick = new HashMap<String, Animation>();
+    brick.put("defult", new Animation(brickImage, 1));
 
-      //Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), color(40, 90, 230));
-      Map<String, Animation> brick = new HashMap<String, Animation>();
-      brick.put("defult", new Animation(brickImage, 1));
+    Map<String, Animation> crate = new HashMap<String, Animation>();
+    crate.put("defult", new Animation(crateImage, 1));
 
-      Map<String, Animation> crate = new HashMap<String, Animation>();
-      crate.put("defult", new Animation(crateImage, 1));
-      //Platform platform = new Platform(this, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225 * i, height - 100), brick);
-
-      Map<String, Animation> anim = crate;
-
-      if (random(1) < 0.5) {
-        anim = brick;
-      }
-
-      int l = ((int)(Math.random() * 3)) * 32 + 32;
-      int r = -(((int)(Math.random() * 3)) * 32 + 32);
-      Platform platform = new Platform(this, new Polygon(new PVector(r, -32), new PVector(l, -32), new PVector(l, 32), new PVector(r, 32)), new PVector(l - r + 225 * i, height - 100), anim);
-      world.addPlatform(platform);
+    if (random(1) < 0.5) {
+      return brick;
+    } else {
+      return crate;
     }
-
-    //Platform platform = new Platform(world, new Polygon(new PVector(-100, -25), new PVector(100, -25), new PVector(100, 25), new PVector(-100, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
-
-    //Platform platform = new Platform(world, new Polygon(new PVector(-75, -25), new PVector(75, -25), new PVector(75, 25), new PVector(-75, 25)), new PVector(100 + 225, height - 100), color(40, 90, 230));
-    //world.addPlatform(platform);
   }
 
   public void runLoop() {
@@ -173,6 +162,15 @@ public class Game {
     world.getPlayer().setAcceleration(new PVector(0, 0));
     world.getPlayer().setVelocity(new PVector(0, 0));
     paused = false;
+    Platform first = world.getPlatforms().size() > 1 ? world.getPlatforms().get(1) : null;
+    while (first != null) {
+      world.getPlatforms().remove(1);
+      first = world.getPlatforms().size() > 1 ? world.getPlatforms().get(1) : null;
+    }
+    spaces = 0;
+    yLevel = height - 96;
+    
+    world.addPlatform(new Platform(this, new Polygon(new PVector(0, 0), new PVector(96, 0), new PVector(96, 32), new PVector(0, 32)), new PVector(width/2 - 96/2, yLevel), genRandomAnim()));
   }
 
   public void buttonPressed(String buttonName) {
@@ -194,12 +192,12 @@ public class Game {
     color col2 = color(92, 162, 232);
     background(lerpColor(col1, col2, (sin(secsRunning) + 1) / 2));
     mouse.update(dt);
-    
+
     fill(255);
-    
+
     textSize(64);
     text("Urlando", width/2, 80);
-    
+
     fill(0);
     textSize(40);
     text("High Score:", width/2, 150);
@@ -221,6 +219,70 @@ public class Game {
     }
   }
 
+  public int generatePlatforms(ArrayList<Platform> platformList, int yLevel, int spaces) {
+    Platform lastPlatform = platformList.get(platformList.size()-1);
+    //println(spaces);
+    float nextX = lastPlatform.getPosition().x + lastPlatform.getWidth() + max(0, spaces);
+    //println(nextX);
+
+    float randVal = random(1.2);
+
+    if (spaces >= maxSpaces || spaces < 0) {
+      randVal = random(0.9);
+    }
+    
+    if (randVal < 0.2) {
+      Platform temp = new Platform(this, new Polygon(new PVector(0, 0), new PVector(96, 0), new PVector(96, 32), new PVector(0, 32)), new PVector(nextX, yLevel), genRandomAnim());
+      platformList.add(temp);
+    } else if (randVal < 0.5) {
+      yLevel += (((int)random(2)) * 2 - 1) * ((int)random(2) + 1) * 32;
+      yLevel = constrain(yLevel, minYLevel, maxYLevel);
+      Platform temp = new Platform(this, new Polygon(new PVector(0, 0), new PVector(96, 0), new PVector(96, 32), new PVector(0, 32)), new PVector(nextX, yLevel), genRandomAnim());
+      platformList.add(temp);
+    } else if (randVal < 0.7) {
+      if (yLevel - 128 < minYLevel) return yLevel;
+      
+      Map<String, Animation> anim = genRandomAnim();
+      
+      int staircaseSize = 4;
+      for (int x = 0; x < staircaseSize; x++) {
+        Platform temp = new Platform(this, new Polygon(new PVector(0, 0), new PVector(32, 0), new PVector(32, 32), new PVector(0, 32)), new PVector(nextX + x * 32, yLevel - x * 32), anim);
+        platformList.add(temp);
+      }
+      
+      yLevel -= (staircaseSize - 1)*32;
+      
+    } else if (randVal < 0.9) {
+      if (yLevel + 128 > maxYLevel) return yLevel;
+      
+      Map<String, Animation> anim = genRandomAnim();
+      
+      int staircaseSize = 4;
+      for (int x = 0; x < staircaseSize; x++) {
+        Platform temp = new Platform(this, new Polygon(new PVector(0, 0), new PVector(32, 0), new PVector(32, 32), new PVector(0, 32)), new PVector(nextX + x * 32, yLevel + x * 32), anim);
+        platformList.add(temp);
+      }
+      
+      yLevel += (staircaseSize - 1)*32;
+      
+    } else if (randVal < 1.1) {
+      yLevel = -96;
+    } else if (randVal < 1.2) {
+      yLevel = -128;
+    }
+
+    return yLevel;
+  }
+
+  int yLevel = height - 64;
+  
+  int minYLevel = 96;
+  int maxYLevel = height - 96;
+
+  int spaces = 0;
+
+  int maxSpaces = 128;
+
   public void gameLoop(float secsRunning, float dt) {
 
     if (keyDown('p') && !prevKeyDown('p')) {
@@ -235,10 +297,31 @@ public class Game {
       text("PAUSED", width/2, height/2);
       return;
     }
-    
+
     float pixelsPerSecond = basePixelsPerSecond + (world.getDifficulty() * 50);
 
     gameTimer += dt;
+
+
+    Platform first = world.getPlatforms().size() > 1 ? world.getPlatforms().get(1) : null;
+    while (first != null && first.getPosition().x+first.getWidth() < gameTimer * pixelsPerSecond) {
+      world.getPlatforms().remove(1);
+      first = world.getPlatforms().size() > 1 ? world.getPlatforms().get(1) : null;
+    }
+
+    Platform last = world.getPlatforms().size() > 1 ? world.getPlatforms().get(world.getPlatforms().size() - 1) : null;
+    while (last == null || last.getPosition().x+last.getWidth() < width + gameTimer * pixelsPerSecond) {
+      println(spaces);
+      int newY = generatePlatforms(world.getPlatforms(), yLevel, spaces);
+      if (newY < 0) {
+        spaces = -newY;
+      } else {
+        spaces = 0;
+        yLevel = newY;
+      }
+      last = world.getPlatforms().size() > 1 ? world.getPlatforms().get(world.getPlatforms().size() - 1) : null;
+    }
+    
 
     for (int i = 0; i < backgrounds.length; i++) {
       PImage img = backgrounds[i];
@@ -256,7 +339,6 @@ public class Game {
     lerpFactor -= dt * 2.3;
 
     int highScore = getHighScore();
-    println(((world.getDifficulty() + 1) / 12.0 + 1));
     int score = (int) (((gameTimer * pixelsPerSecond) / 100) * ((world.getDifficulty() + 1) / 12.0 + 1));
 
     if (score != scoreLastFrame) {

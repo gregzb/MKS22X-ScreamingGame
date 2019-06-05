@@ -12,16 +12,21 @@ public class Platform extends CollidableObject{
     
   }
   
+  public float getWidth() {
+    return bounds.getTopRight().x-bounds.getBotLeft().x;
+  }
+  
+  public float getHeight() {
+    return bounds.getBotLeft().y-bounds.getTopRight().y;
+  }
+  
   public void display() {
     PImage cImage = getCurrentImage();
     
     if (cImage == null) return;
     
-    float boxWidth = bounds.getTopRight().x-bounds.getBotLeft().x;
-    float boxHeight = bounds.getBotLeft().y-bounds.getTopRight().y;
-    
-    float xRepeats = (boxWidth/cImage.width);
-    float yRepeats = (boxHeight/cImage.height);
+    float xRepeats = (getWidth()/cImage.width);
+    float yRepeats = (getHeight()/cImage.height);
     
     for (int y = 0; y < yRepeats; y++) {
       for (int x = 0; x < xRepeats; x++) {
