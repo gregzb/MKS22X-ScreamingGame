@@ -64,6 +64,7 @@
   * Added menu, new game title, and font -Greg
   * Pause capability added -Greg
   * Three difficulty settings on the main menu alter speed and scoring of the game -Greg
+  * Added terrain generation with a few different types of "terrains" (up, down, flat, jump, etc) -Greg
   
 # Authors
   * Greg Zborovsky
