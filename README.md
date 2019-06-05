@@ -76,6 +76,7 @@
   * Pitch detection is not perfect, but mostly differentiates most vocals from claps.
   * Separation Axis Theorem collision is used rather raycasting collision or any other form of collision. Sloped surfaced do not seem possible to handle.
   * Processing doesn't seem to handle nearest neighbor scaling, so a method from StackOverflow was borrowed and modified.
+  * 90% of the graphics were not made by us. (Thanks artists!)
 
 # Authors
   * Greg Zborovsky
