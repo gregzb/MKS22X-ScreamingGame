@@ -1,7 +1,9 @@
 # Urlando
   This project appears to be a normal platformer at first glance, but comes with the twist that rather than using the keyboard to control the character, sound from the microphone is used instead. 
 #### Get the highest score you can in this endless platformer!
-  
+
+![Urlando Screenshot](https://raw.githubusercontent.com/gregzb/MKS22X-ScreamingGame/master/urlandoScreenshot.png)
+
 ## How To Run It
   1. Open up the project in Processing
   2. Install the Sound Library (Sketch > Import Library > Add Library... > Search for "Sound" > Install The Processing Foundation's Library)
