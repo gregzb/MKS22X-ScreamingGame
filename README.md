@@ -1,12 +1,16 @@
-# Screaming Game
-  This project appears to be a normal platformer at first glance, but comes with the twist that rather than using the keyboard to control the character, sound from the microphone is used instead.
+# Urlando
+  This project appears to be a normal platformer at first glance, but comes with the twist that rather than using the keyboard to control the character, sound from the microphone is used instead. 
+#### Get the highest score you can in this endless platformer!
   
 ## How To Run It
-  Open up the project in Processing, press the play button and use A, D, and space to move around.
-  (Only tested in Processing version 3.5.3). 
-  New Version: You can now use sound (optionally clapping) to control the character. The loudness (amplitude) will cause the 
-  character to move more slowly/faster while the pitch (frequency) should toggle between a jump/walk/none. 
-  New Version: The optional clapping has been eliminated with the sucessful addition of pitch to control movement. 
+  1. Open up the project in Processing
+  2. Install the Sound Library (Sketch > Import Library > Add Library... > Search for "Sound" > Install The Processing Foundation's Library)
+  3. Press Play
+  
+## Controls
+  * Use your microphone to move around. A low pitch sound will only move the character forward. A high pitch sound will move the character forward and cause them to jump.
+  * P to Pause
+  * Esc to go back to the main menu
   
 ## Development Log
 ### 5/17/2019
@@ -65,7 +69,12 @@
   * Pause capability added -Greg
   * Three difficulty settings on the main menu alter speed and scoring of the game -Greg
   * Added terrain generation with a few different types of "terrains" (up, down, flat, jump, etc) -Greg
-  
+
+# Additional Notes
+  * Pitch detection is not perfect, but mostly differentiates most vocals from claps.
+  * Separation Axis Theorem collision is used rather raycasting collision or any other form of collision. Sloped surfaced do not seem possible to handle.
+  * Processing doesn't seem to handle nearest neighbor scaling, so a method from StackOverflow was borrowed and modified.
+
 # Authors
   * Greg Zborovsky
   * Emma Choi
